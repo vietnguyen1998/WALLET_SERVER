@@ -37,7 +37,7 @@ module.exports = {
         options: {
             encrypt: sqlEncrypt,
             truestedConnection: sqlTrust,
-            instanceName: 'SQLEXPRESS'
+           // instanceName: 'SQLEXPRESS'
         }
     }
 };

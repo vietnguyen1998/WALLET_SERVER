@@ -23,4 +23,7 @@ app.get('/api', function (req, res) {
 var AuthController = require(__root + 'src/auth/AuthController');
 app.use('/api/auth', AuthController);
 
+var PromotionController = require(__root + 'src/auth/PromotionController');
+app.use('/api/auth', PromotionController);
+
 module.exports = app;
