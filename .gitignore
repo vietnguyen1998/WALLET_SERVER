@@ -54,7 +54,7 @@ node_modules
 package-lock.json
 .env
 package.json
-
+config.js
 # OS X
 .DS_Store
 
