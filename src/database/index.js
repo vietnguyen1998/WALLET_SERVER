@@ -1,7 +1,6 @@
 "use strict";
 
 const accounts = require( "./Accounts" );
-const promotions = require( "./Promotions" );
 const sql = require( "mssql" );
 const sqlServer = async ( config ) => {
     let pool = null;
@@ -46,8 +45,7 @@ const sqlServer = async ( config ) => {
     // this is the API the client exposes to the rest
     // of the application
     return {
-        accounts: await accounts.register( { sql, getConnection } ),
-        promotions: await promotions.register( { sql, getConnection } )
+        accounts: await accounts.register( { sql, getConnection } )
     };
 };
 

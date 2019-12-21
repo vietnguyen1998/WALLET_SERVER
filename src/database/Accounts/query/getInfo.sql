@@ -1,4 +1,5 @@
-SELECT [GroupID]
+SELECT [AccountID]
+      ,[GroupID]
       ,[AccountName]
       ,[Balances]
       ,[Status]
