@@ -8,4 +8,4 @@ SELECT [PromotionID]
       ,[ShortDescription]
       ,[Type]
   FROM [dbo].[Promotions]
-  WHERE [Type] = 'hot'
+  WHERE [Type] = 'new'
