@@ -2,6 +2,7 @@
 
 const accounts = require("./Accounts");
 const promotions = require("./Promotions");
+const usersettings = require("./UserSettings");
 const sql = require( "mssql" );
 const sqlServer = async ( config ) => {
     let pool = null;
@@ -47,7 +48,8 @@ const sqlServer = async ( config ) => {
     // of the application
     return {
         accounts: await accounts.register({ sql, getConnection }),
-        promotions: await promotions.register({ sql, getConnection })
+        promotions: await promotions.register({ sql, getConnection }),
+        usersettings: await usersettings.register({ sql, getConnection }),
     };
 };
 
