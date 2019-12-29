@@ -40,28 +40,32 @@ router.post('/login', async function (req, res) {
 //check current phone is limit ( the logined phone is not exceed 3)
 router.post('/checkuser', async function (req, res, next) {
   try {
-    
+
+    //     var waitTill = new Date(new Date().getTime() + 12* 1000);
+    // while(waitTill > new Date()){}
+
     const db = req.app.get('db');
     const result = await db.accounts.getInfo(req.body.phone);
-    
+
     if (result.recordset.length > 0) {
-      const uniqueID =req.body.uniqueID;
+      const uniqueID = req.body.uniqueID;
       const accountID = result.recordset[0].AccountID
       const listDevices = await db.accounts.getListDevices(accountID);
       //check number of devices in  db
       if (listDevices.recordset.length <= 3) {
 
-        for(var i = 0; i < listDevices.recordset.length; i++) {
+        for (var i = 0; i < listDevices.recordset.length; i++) {
           var obj = listDevices.recordset[i];
-         
-          if (uniqueID == obj.UniqueID){
-            return res.status(200).send({ exist: true, error: false, limit:false });
-          }
-      }
-       const resultAdd = await db.accounts.addDevices(accountID,uniqueID);
 
-       if(resultAdd.rowsAffected == 1)
-        return res.status(200).send({ exist: true, error: false, add: true });
+          if (uniqueID == obj.UniqueID) {
+
+            return res.status(200).send({ exist: true, error: false, limit: false });
+          }
+        }
+        const resultAdd = await db.accounts.addDevices(accountID, uniqueID);
+
+        if (resultAdd.rowsAffected == 1)
+          return res.status(200).send({ exist: true, error: false, limit: false });
       }
       return res.status(200).send({ exist: true, error: false, limit: true });
     } else {
@@ -77,12 +81,18 @@ router.post('/checkuser', async function (req, res, next) {
 router.post('/requestotp', async function (req, res, next) {
 
   try {
+    // var waitTill = new Date(new Date().getTime() + 12 * 1000);
+    // while (waitTill > new Date()) { }
     let numberPhone = req.body.phone.replace('0', '84');
     let uniqueID = req.body.deviceId;
 
     let otpdata = await otp.createOTP(uniqueID, numberPhone);
 
-    return res.status(200).send(otpdata);
+    console.log(otpdata.otp)
+    if (otpdata) {
+      return res.status(200).send({ createOTP: true });
+    }
+    return res.status(200).send({ createOTP: false });
 
   } catch (error) {
     return res.status(500).send({ exist: false, error: true, errmessage: error });
@@ -93,27 +103,29 @@ router.post('/requestotp', async function (req, res, next) {
 router.post('/checkotp', async function (req, res, next) {
 
   try {
+    var waitTill = new Date(new Date().getTime() + 4 * 1000);
+    while (waitTill > new Date()) { }
     let numberPhone = req.body.phone.replace('0', '84');
-    let uniqueID = req.body.deviceId;
+    let uniqueID = req.body.uniqueID;
     let OTP = req.body.otp;
 
     console.log(OTP);
+    console.log(req.body)
+    let result;
 
-    await otp.verifyOTP(numberPhone, uniqueID, OTP).then(result => {
-      if (result) {
-        return res.status(200).send({ exist: true, error: false });
-      } else {
-        return res.status(200).send({ exist: false, error: false });
-      }
+    await otp.verifyOTP(numberPhone, uniqueID, OTP).then(response => { result = response });
 
-    }).catch(error => {
-      return res.status(500).send({ exist: false, error: true, errorCode: 2 });
-    })
-
+    console.log(result)
+    if (result) {
+      console.log(result)
+      return res.status(200).send({ exist: true, error: false });
+    } else {
+      return res.status(200).send({ exist: false, error: false });
+    }
 
   } catch (error) {
-    return res.status(500).send({ exist: false, error: true, errorCode: 3 });
-  }
+  return res.status(500).send({ exist: false, error: true});
+}
 });
 
 
