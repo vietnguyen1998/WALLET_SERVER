@@ -153,7 +153,8 @@ router.post('/checkpass', async function (req, res, next) {
   try {
     const db = req.app.get('db');
     const result = await db.accounts.auth(req.body.phone,req.body.pass);
-    console.log(req.body.pass)
+      console.log(req.body.pass);
+      console.log(req.body.phone);
     if (result.recordset.length > 0) {
       console.log("saa2")
      return res.status(200).send({ login:true,error: false });

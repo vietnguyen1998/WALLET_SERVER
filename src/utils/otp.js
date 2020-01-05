@@ -3,11 +3,8 @@ var sendSMS = require('../sendSMS')
 
 let storeOTP ={}
 
-<<<<<<< HEAD
-const timeExpried = 18000 ; // 10s
-=======
+
 const timeExpried = 40000 ; // 40s
->>>>>>> 1a2db50849a7112fb8493b28f26c9ea7f58e8b2e
 
 const random6Digits = () =>{
     return 100000 + Math.floor(Math.random() * 900000);
