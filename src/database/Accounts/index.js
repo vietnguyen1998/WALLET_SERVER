@@ -49,7 +49,7 @@ const register = async ( { sql, getConnection } ) => {
         request.input( "phone", sql.VarChar( 50 ), body.phone );
         request.input( "password", sql.VarChar( 128 ), body.password );
         request.input( "group", sql.VarChar( 50 ), '1' );
-        request.input( "accname", sql.VarChar( 128 ), 'NO NAME');
+        request.input( "accname", sql.VarChar( 128 ), '');
         request.input( "balances", sql.Decimal( 18, 2), 0 );
         request.input( "status", sql.Bit(), 1 );
         // return the executed query

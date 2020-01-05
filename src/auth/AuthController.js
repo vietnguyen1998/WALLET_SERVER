@@ -37,11 +37,13 @@ router.post('/login', async function (req, res) {
   }
 });
 
+
+
 //check current phone is limit ( the logined phone is not exceed 3)
 router.post('/checkuser', async function (req, res, next) {
   try {
 
-    //     var waitTill = new Date(new Date().getTime() + 12* 1000);
+    //     var waitTill = new Date(new Date().getTime() + 3* 1000);
     // while(waitTill > new Date()){}
 
     const db = req.app.get('db');
@@ -64,6 +66,7 @@ router.post('/checkuser', async function (req, res, next) {
         }
         const resultAdd = await db.accounts.addDevices(accountID, uniqueID);
 
+        //add device successful
         if (resultAdd.rowsAffected == 1)
           return res.status(200).send({ exist: true, error: false, limit: false });
       }
@@ -103,8 +106,8 @@ router.post('/requestotp', async function (req, res, next) {
 router.post('/checkotp', async function (req, res, next) {
 
   try {
-    var waitTill = new Date(new Date().getTime() + 4 * 1000);
-    while (waitTill > new Date()) { }
+    // var waitTill = new Date(new Date().getTime() + 4 * 1000);
+    // while (waitTill > new Date()) { }
     let numberPhone = req.body.phone.replace('0', '84');
     let uniqueID = req.body.uniqueID;
     let OTP = req.body.otp;
@@ -112,24 +115,23 @@ router.post('/checkotp', async function (req, res, next) {
     console.log(OTP);
     console.log(req.body)
     let result;
-
     await otp.verifyOTP(numberPhone, uniqueID, OTP).then(response => { result = response });
-
     console.log(result)
     if (result) {
-      console.log(result)
-      return res.status(200).send({ exist: true, error: false });
+      const db = req.app.get('db');
+      const getName = await db.accounts.getInfo(req.body.phone);
+      let nameAccount = null;
+      if (getName.recordset.length > 0)
+        nameAccount = getName.recordset[0].AccountName
+      console.log('nameAccount  ' + nameAccount)
+      return res.status(200).send({ exist: true, error: false, name: nameAccount });
     } else {
       return res.status(200).send({ exist: false, error: false });
     }
-
   } catch (error) {
-  return res.status(500).send({ exist: false, error: true});
-}
+    return res.status(500).send({ exist: false, error: true });
+  }
 });
-
-
-
 
 router.post('/getinfo', utils.verifyToken, async function (req, res, next) {
   try {
@@ -141,6 +143,26 @@ router.post('/getinfo', utils.verifyToken, async function (req, res, next) {
       return res.status(500).send({ auth: false, error: true, errmessage: "some error!" });
     }
   } catch (error) {
+    return res.status(500).send({ auth: false, error: true, errmessage: error });
+  }
+});
+
+//check password
+router.post('/checkpass', async function (req, res, next) {
+
+  try {
+    const db = req.app.get('db');
+    const result = await db.accounts.auth(req.body.phone,req.body.pass);
+    console.log(req.body.pass)
+    if (result.recordset.length > 0) {
+      console.log("saa2")
+     return res.status(200).send({ login:true,error: false });
+    } else {
+      console.log("saa3")
+      return res.status(200).send({ login:false });
+    }
+  } catch (error) {
+    console.log("saa4")
     return res.status(500).send({ auth: false, error: true, errmessage: error });
   }
 });

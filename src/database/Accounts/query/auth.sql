@@ -6,4 +6,4 @@ SELECT [AccountID]
       ,[Balances]
       ,[Status]
 FROM  [dbo].[Accounts]
-WHERE [Phone] = @phone AND Password=@password;
+WHERE [Phone] = @phone AND [Password]=@password;
