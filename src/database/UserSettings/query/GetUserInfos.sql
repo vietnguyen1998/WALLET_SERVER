@@ -7,5 +7,6 @@ SELECT customer.Email
 	  ,customer.Identification
 	  ,customer.Address
 	  ,customer.Birthday
+	  ,customer.Image
 FROM [wallet].[dbo].[Customers] customer join [wallet].[dbo].[Accounts] account on customer.AccountID = account.AccountID
 WHERE account.Phone = @phone
