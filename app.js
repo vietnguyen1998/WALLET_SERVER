@@ -32,10 +32,10 @@ app.use('/api/auth', AuthController);
 
 
 var PromotionController = require(__root + 'src/auth/PromotionController');
-app.use('/api/auth', PromotionController);
+app.use('/api/promotion', PromotionController);
 
 var UserSettingController = require(__root + 'src/auth/UserSettingController');
-app.use('/api/auth', UserSettingController);
+app.use('/api/user', UserSettingController);
 
 
 module.exports = app;

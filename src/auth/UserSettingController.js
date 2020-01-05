@@ -15,21 +15,21 @@ var config = require('../../config'); // get config file
 
 router.post('/UpdateUsers', async function (req, res, next) {
     try {
-        console.log(req.body.phone);
-        console.log(req.body.identification);
-        console.log(req.body.sex);
-        console.log(req.body.address);
-        console.log(req.body.birthday);
-        console.log(req.body.image);
         const db = req.app.get('db');
+        console.log(req.body.phone)
+        console.log(req.body.email)
+        console.log(req.body.identification)
+        console.log(req.body.sex)
+        console.log(req.body.address)
+        console.log(req.body.birthday)
         try {
-            await db.usersettings.UpdateUsers(req.body.phone, req.body.email,req.body.identification,  req.body.sex, req.body.address, req.body.birthday, req.body.image);
+            await db.usersettings.UpdateUsers(req.body.phone, req.body.email,req.body.identification,  req.body.sex, req.body.address, req.body.birthday);
         } catch (e) {
-            return res.status(500).send({ auth: false, error: true, errmessage: "some error2!" });
+            return res.status(500).send({ auth: false, error: true, errmessage: "Not updated" });
         }
         return res.status(200).send({ auth: true, error: false });
     } catch (error) {
-        return res.status(500).send({ auth: false, error: true, errmessage: "some error1!" });
+        return res.status(500).send({ auth: false, error: true, errmessage: "Connect database failed" });
     }
 });
 
@@ -65,6 +65,7 @@ router.post('/GetUserInfos', async function (req, res) {
                 identification: result.recordset[0].Identification,
                 address: result.recordset[0].Address,
                 birthday: result.recordset[0].Birthday,
+                image: result.recordset[0].Image,
             })
         );
         if (result.recordset.length > 0) {
