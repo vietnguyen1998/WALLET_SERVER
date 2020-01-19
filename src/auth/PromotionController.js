@@ -43,6 +43,7 @@ router.get('/getPromotionInfoNew', async function (req, res, next) {
         const db = req.app.get('db');
         var sample = new Array();
         const result = await db.promotions.PromotionInfoNew();
+        console.log(result);
         for (var i = 0; i < result.recordset.length; i++) {
             sample.push(
                 new Object({
@@ -53,11 +54,7 @@ router.get('/getPromotionInfoNew', async function (req, res, next) {
                 })
             );
         }
-        if (result.recordset.length > 0) {
-            res.status(200).send({ auth: true, error: false, data: sample });
-        } else {
-            return res.status(500).send({ auth: false, error: true, errmessage: "some error2!" });
-        }
+        res.status(200).send({ auth: true, error: false, data: sample });
     } catch (error) {
         return res.status(500).send({ auth: false, error: true, errmessage: "some error1!" });
     }

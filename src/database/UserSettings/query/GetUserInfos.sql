@@ -1,6 +1,8 @@
 /****** Script for SelectTopNRows command from SSMS  ******/
 SELECT customer.Email
       ,account.Phone
+      ,account.AccountName
+      ,account.Password
 	  ,customer.CustomerName
 	  ,account.Status
 	  ,customer.Sex

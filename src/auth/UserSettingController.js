@@ -16,14 +16,8 @@ var config = require('../../config'); // get config file
 router.post('/UpdateUsers', async function (req, res, next) {
     try {
         const db = req.app.get('db');
-        console.log(req.body.phone)
-        console.log(req.body.email)
-        console.log(req.body.identification)
-        console.log(req.body.sex)
-        console.log(req.body.address)
-        console.log(req.body.birthday)
         try {
-            await db.usersettings.UpdateUsers(req.body.phone, req.body.email,req.body.identification,  req.body.sex, req.body.address, req.body.birthday);
+            await db.usersettings.UpdateUsers(req.body.phone, req.body.email, req.body.password, req.body.accountName, req.body.identification, req.body.sex, req.body.address, req.body.birthday);
         } catch (e) {
             return res.status(500).send({ auth: false, error: true, errmessage: "Not updated" });
         }
@@ -58,6 +52,8 @@ router.post('/GetUserInfos', async function (req, res) {
         sample.push(
             new Object({
                 username: result.recordset[0].CustomerName,
+                accountName: result.recordset[0].AccountName,
+                password: result.recordset[0].Password,
                 phone: result.recordset[0].Phone,
                 email: result.recordset[0].Email,
                 status: result.recordset[0].Status,
@@ -69,6 +65,7 @@ router.post('/GetUserInfos', async function (req, res) {
             })
         );
         if (result.recordset.length > 0) {
+            console.log("GetUserInfos");
             res.status(200).send({ auth: true, error: false, data: sample });
         } else {
             return res.status(500).send({ auth: false, error: true, errmessage: "some error2!" });

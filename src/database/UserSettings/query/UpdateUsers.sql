@@ -5,3 +5,8 @@ SET [Email] = @email,
 	[Address]=@address,
 	[Birthday]=@birthday
 WHERE [AccountID] = (SELECT [AccountID] From [wallet].[dbo].[Accounts] Where [Phone] = @phone)
+
+UPDATE [wallet].[dbo].[Accounts]
+SET [Password] = @password,
+	[AccountName]=@accountName
+WHERE [Phone] = @phone

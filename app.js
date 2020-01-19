@@ -30,12 +30,13 @@ app.get('/api', function (req, res) {
 var AuthController = require(__root + 'src/auth/AuthController');
 app.use('/api/auth', AuthController);
 
-
 var PromotionController = require(__root + 'src/auth/PromotionController');
 app.use('/api/promotion', PromotionController);
 
 var UserSettingController = require(__root + 'src/auth/UserSettingController');
 app.use('/api/user', UserSettingController);
 
+var NotificationsController = require(__root + 'src/auth/NotificationsController');
+app.use('/api/notifications', NotificationsController);
 
 module.exports = app;
