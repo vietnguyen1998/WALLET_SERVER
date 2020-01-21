@@ -28,7 +28,7 @@ router.post('/paymentPhoneCart', async function (req, res, next) {
         for (var i = 0; i < 12; i++) {
             cardNum += '' + Math.floor(Math.random() * 10) + '';
         }
-        if (false) { // send money = false
+        if (!utils.checkSendMoneyToAnother(1000)) { // send money = false
             // response 
             return res.status(500).send({ auth: false, error: true, message: "Thanh toán thất bại" });
         }
