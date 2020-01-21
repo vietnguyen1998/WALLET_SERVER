@@ -123,6 +123,22 @@ const parse8583IntoData = (data) => {
     "time" :time,
   }
 }
+//response json is 
+//"success": boolean,
+//"money" :number,
+//"fee" :"number" (always 0)
+//"date" : string,
+//"time" :string,
+// }
+//Format date is dd/mm/yy (response string is DDMMYY)
+//Format time is HH:mm(response string is HHmm)
+const checkSendMoneyToAnother =(money) =>{
+  let data = utils.parseInto8583(money);
+  let dataResponse = utils.response8583Data(data);
+  //parse response data (this is final reponse json)
+  let finalData = utils.parse8583IntoData(dataResponse);
+  return finalData;
+}
 //get current time and parse it into iso_8583 format 
 const getTime = (fieldNumber) => {
   const time = new Date();
