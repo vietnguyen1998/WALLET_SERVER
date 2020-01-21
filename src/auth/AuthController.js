@@ -38,7 +38,6 @@ router.post('/login', async function (req, res) {
 });
 
 
-
 //check current phone is limit ( the logined phone is not exceed 3)
 router.post('/checkuser', async function (req, res, next) {
   try {
@@ -60,7 +59,6 @@ router.post('/checkuser', async function (req, res, next) {
           var obj = listDevices.recordset[i];
 
           if (uniqueID == obj.UniqueID) {
-
             return res.status(200).send({ exist: true, error: false, limit: false });
           }
         }
@@ -123,8 +121,7 @@ router.post('/checkotp', async function (req, res, next) {
       let nameAccount = null;
       if (getName.recordset.length > 0)
         nameAccount = getName.recordset[0].AccountName
-      console.log('nameAccount  ' + nameAccount)
-      return res.status(200).send({ exist: true, error: false, name: nameAccount });
+      return res.status(200).send({ exist: true, error: false });
     } else {
       return res.status(200).send({ exist: false, error: false });
     }
@@ -146,6 +143,21 @@ router.post('/getinfo', utils.verifyToken, async function (req, res, next) {
     return res.status(500).send({ auth: false, error: true, errmessage: error });
   }
 });
+//get name user
+router.post('/getnameuser',  async function (req, res, next) {
+  try {
+    const db = req.app.get('db');
+    const result = await db.accounts.getInfo(req.body.phone);
+    if (result.recordset.length > 0) {
+      let data= result.recordset[0].AccountName 
+      res.status(200).send({ error: false, data: data});
+    } else {
+      return res.status(200).send({ error: true});
+    }
+  } catch (error) {
+    return res.status(500).send({  error: true, errmessage: error });
+  }
+});
 
 //check password
 router.post('/checkpass', async function (req, res, next) {
@@ -156,14 +168,11 @@ router.post('/checkpass', async function (req, res, next) {
       console.log(req.body.pass);
       console.log(req.body.phone);
     if (result.recordset.length > 0) {
-      console.log("saa2")
      return res.status(200).send({ login:true,error: false });
     } else {
-      console.log("saa3")
       return res.status(200).send({ login:false });
     }
   } catch (error) {
-    console.log("saa4")
     return res.status(500).send({ auth: false, error: true, errmessage: error });
   }
 });

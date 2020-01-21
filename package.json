@@ -17,6 +17,7 @@
     "express": "^4.14.1",
     "express-formidable": "^1.2.0",
     "fs-extra": "^7.0.1",
+    "iso_8583": "^2.6.4",
     "jsonwebtoken": "^7.4.1",
     "mongoose": "^4.8.5",
     "mssql": "^4.3.2"
