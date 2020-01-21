@@ -41,4 +41,10 @@ var UserSettingController = require(__root + 'src/auth/AuthMoney');
 app.use('/api/paymoney', UserSettingController);
 
 
+var NotificationsController = require(__root + 'src/auth/NotificationsController');
+app.use('/api/notifications', NotificationsController);
+
+var PhoneController = require(__root + 'src/auth/PhoneController');
+app.use('/api/phone', PhoneController);
+
 module.exports = app;
