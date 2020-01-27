@@ -47,4 +47,7 @@ app.use('/api/notifications', NotificationsController);
 var PhoneController = require(__root + 'src/auth/PhoneController');
 app.use('/api/phone', PhoneController);
 
+var WaterOtherController = require(__root + 'src/auth/WaterOtherController');
+app.use('/api/water', WaterOtherController);
+
 module.exports = app;
