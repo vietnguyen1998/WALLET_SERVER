@@ -18,8 +18,7 @@ const register = async ({ sql, getConnection }) => {
         var yyyy = today.getFullYear();
         if (dd < 10) {dd = '0' + dd}
         if (mm < 10) {   mm = '0' + mm  }
-        today = mm + '/' + dd + '/' + yyyy;
-
+        today = dd + '-' + mm + '-' + yyyy;
         request.input("phone", sql.VarChar(50), phone);
         request.input("servicesID", sql.VarChar(128), servicesID);
         request.input("sourceBalance", sql.NVarChar(128), sourceBalance);
@@ -34,15 +33,20 @@ const register = async ({ sql, getConnection }) => {
         return request.query(sqlQueries.addTransaction);
     };
 
+    const getIDTransaction = async (phone) => {
+        // get a connection to SQL Server
+        const cnx = await getConnection();
+        const request = await cnx.request();
+        request.input("phone", sql.VarChar(50), phone);
+        return request.query(sqlQueries.getIDTransaction);
+    };
+
     const updateIncreaseBalance = async (phone, number) => {
         // get a connection to SQL Server
         const cnx = await getConnection();
         const request = await cnx.request();
-        console.log('hi1')
         request.input("phone", sql.VarChar(50), phone); 
         request.input("number", sql.BigInt, number);
-        console.log('hi2')
-
         return request.query(sqlQueries.updateIncreaseBalance);
     };
 
@@ -61,6 +65,7 @@ const register = async ({ sql, getConnection }) => {
         addTransaction,
         updateIncreaseBalance,
         updateDecreaseBalance,
+        getIDTransaction
     };
 }
 

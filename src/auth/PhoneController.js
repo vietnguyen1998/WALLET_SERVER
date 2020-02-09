@@ -16,9 +16,9 @@ var config = require('../../config'); // get config file
 
 router.post('/paymentPhoneCart', async function (req, res, next) {
     try {
-        network = req.body.network;
-        phone = req.body.phone;
-        money = req.body.money;
+        let network = req.body.network;
+        let phone = req.body.phone;
+        let money = req.body.money;
 
         let seri = '';
         let cardNum = '';
@@ -40,7 +40,11 @@ router.post('/paymentPhoneCart', async function (req, res, next) {
         db.utilFuncs.updateDecreaseBalance(req.body.phone, Number.parseInt(req.body.money));
 
         // add transaction
-        db.utilFuncs.addTransaction(req.body.phone, null, "VinaPhone", Number.parseInt(req.body.money), 0, "Thanh toán", "Mua thẻ điện thoại", "paidCardPhone", 1);
+        await db.utilFuncs.addTransaction(req.body.phone, 'Phone01', network, Number.parseInt(req.body.money), 0, "Thanh toán", "Mua thẻ điện thoại", "paidCardPhone", 2);
+
+        // get ID
+        var returnTransactionID = await db.utilFuncs.getIDTransaction(req.body.phone);
+        console.log(returnTransactionID)
         // return TRUE
         console.log('paymentPhoneCart TRUE')
         let data = {
@@ -49,10 +53,12 @@ router.post('/paymentPhoneCart', async function (req, res, next) {
             message: ('Thanh toán thành công thẻ Viettel ' + money),
             money: money,
             phone: phone,
-            network: network
+            network: network,
+            transaction: returnTransactionID.recordset[0].TransactionID
         }
         return res.status(200).send({ error: false, data: data });
     } catch (error) {
+        db.utilFuncs.addTransaction(req.body.phone, 'Phone01', network, Number.parseInt(req.body.money), 0, "Thanh toán", "Mua thẻ điện thoại", "paidCardPhone", 0);
         return res.status(500).send({ auth: false, error: true, message: "Server error" });
     }
 });
