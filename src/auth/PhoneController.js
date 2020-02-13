@@ -16,36 +16,38 @@ var config = require('../../config'); // get config file
 
 router.post('/paymentPhoneCart', async function (req, res, next) {
     try {
+        // rea
         let network = req.body.network;
         let phone = req.body.phone;
         let money = req.body.money;
+        let keySource = req.body.keySource;
 
-        let seri = '';
-        let cardNum = '';
-        for (var i = 0; i < 13; i++) {
-            seri += '' + Math.floor(Math.random() * 10) + '';
-        }
-        for (var i = 0; i < 12; i++) {
-            cardNum += '' + Math.floor(Math.random() * 10) + '';
-        }
-        
-        // error
+        // sent money bank
         //if (!utils.checkSendMoneyToAnother(req.body.money)) { // send money = false
-            // response 
-            //return res.status(500).send({ auth: false, error: true, message: "Thanh toán thất bại" });
+        // response 
+        //return res.status(500).send({ auth: false, error: true, message: "Thanh toán thất bại" });
         //}
 
         // update balance
         const db = req.app.get('db');
-        db.utilFuncs.updateDecreaseBalance(req.body.phone, Number.parseInt(req.body.money));
+        if (keySource == 0) {
+            console.log(keySource)
+            db.utilFuncs.updateDecreaseBalance(req.body.phone, Number.parseInt(req.body.money));
+        }
 
         // add transaction
         await db.utilFuncs.addTransaction(req.body.phone, 'Phone01', network, Number.parseInt(req.body.money), 0, "Thanh toán", "Mua thẻ điện thoại", "paidCardPhone", 2);
 
-        // get ID
-        var returnTransactionID = await db.utilFuncs.getIDTransaction(req.body.phone);
-        console.log(returnTransactionID)
-        // return TRUE
+        // res
+        let seri = '';
+        let cardNum = '';
+        var i;
+        for (i = 0; i < 13; i++) {
+            seri += '' + Math.floor(Math.random() * 10) + '';
+        }
+        for (i = 0; i < 12; i++) {
+            cardNum += '' + Math.floor(Math.random() * 10) + '';
+        }
         console.log('paymentPhoneCart TRUE')
         let data = {
             seriNum: seri,
@@ -54,7 +56,6 @@ router.post('/paymentPhoneCart', async function (req, res, next) {
             money: money,
             phone: phone,
             network: network,
-            transaction: returnTransactionID.recordset[0].TransactionID
         }
         return res.status(200).send({ error: false, data: data });
     } catch (error) {
@@ -65,13 +66,33 @@ router.post('/paymentPhoneCart', async function (req, res, next) {
 
 router.post('/paymentPhone', async function (req, res, next) {
     try {
+        // req
         network = req.body.network;
         phone = req.body.phone;
         phoneSend = req.body.phoneSend;
         money = req.body.money;
-        //console.log(network);
-        //console.log(phone);
-        //console.log(money);
+        let keySource = req.body.keySource;
+
+        // send money bank
+        //if (utils.checkSendMoneyToAnother(100)) { // send money = false
+        // response 
+        //return res.status(500).send({ auth: false, error: true, message: "Thanh toán thất bại" });
+        //}
+
+        // send message to client 
+        // todo 
+
+        // update balance
+        const db = req.app.get('db');
+        if (keySource == 0) {
+            console.log(keySource)
+            db.utilFuncs.updateDecreaseBalance(req.body.phone, Number.parseInt(req.body.money));
+        }
+
+        // add transaction
+        db.utilFuncs.addTransaction(req.body.phone, null, "VinaPhone", Number.parseInt(req.body.money), 0, "Thanh toán", "Mua thẻ điện thoại", "paidCardPhone", 1);
+
+        // res
         let seri = '';
         let cardNum = '';
         for (var i = 0; i < 13; i++) {
@@ -80,26 +101,6 @@ router.post('/paymentPhone', async function (req, res, next) {
         for (var i = 0; i < 12; i++) {
             cardNum += '' + Math.floor(Math.random() * 10) + '';
         }
-
-        // error
-        //if (utils.checkSendMoneyToAnother(100)) { // send money = false
-            // response 
-            //return res.status(500).send({ auth: false, error: true, message: "Thanh toán thất bại" });
-        //}
-
-        console.log(phone);
-
-        // send a messager to phone use phoneSend
-        // to do
-
-        // update balance
-        const db = req.app.get('db');
-        db.utilFuncs.updateDecreaseBalance(req.body.phone, Number.parseInt(req.body.money));
-
-        // add transaction
-        db.utilFuncs.addTransaction(req.body.phone, null, "VinaPhone", Number.parseInt(req.body.money), 0, "Thanh toán", "Mua thẻ điện thoại", "paidCardPhone", 1);
-
-        // return TRUE
         console.log('paymentPhones TRUE')
         let data = {
             seriNum: seri,

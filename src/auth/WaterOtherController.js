@@ -214,4 +214,19 @@ router.post('/paymentMovie', async function (req, res, next) {
         return res.status(500).send({ auth: false, error: true, message: "Server error" });
     }
 });
+
+// transaction
+router.post('/getTransactionByID', async function (req, res, next) {
+    try {
+        // get cus info
+        const db = req.app.get('db');
+        const result = await db.utilFuncs.getTransactionByID(req.body.transaction_id);
+        // return
+        console.log("getTransactionByID TRUE");
+
+        res.status(200).send({ error: false, data: result.recordset[0] });
+    } catch (error) {
+        return res.status(500).send({ error: true, errmessage: "server error" });
+    }
+});
 module.exports = router;

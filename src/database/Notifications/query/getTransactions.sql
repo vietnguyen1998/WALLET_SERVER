@@ -12,3 +12,4 @@ SELECT [TransactionID]
       ,[Status]
 FROM [wallet].[dbo].[Transactions]
 WHERE [AccountID] = (SELECT [AccountID] From [wallet].[dbo].[Accounts] Where [Phone] = @phone) 
+ORDER BY [CreateDate] DESC

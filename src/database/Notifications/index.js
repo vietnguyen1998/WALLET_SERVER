@@ -24,9 +24,18 @@ const register = async ({ sql, getConnection }) => {
         request.input("phone", sql.VarChar(50), phone);
         return request.query(sqlQueries.getTransactions);
     };
+
+    const getBankNames = async (phone) => {
+        const cnx = await getConnection();
+        const request = await cnx.request();
+        request.input("phone", sql.VarChar(50), phone);
+        return request.query(sqlQueries.getBankNames);
+    };
+
     return {
         getNotifications,
-        getTransactions
+        getTransactions,
+        getBankNames
     };
 };
 
