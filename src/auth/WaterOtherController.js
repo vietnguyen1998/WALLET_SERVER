@@ -170,10 +170,17 @@ router.post('/ChairInfo', async function (req, res, next) {
 router.post('/paymentMovie', async function (req, res, next) {
     console.log("paymentMovie");
     try {
+        // req
         let money = req.body.money;
         let phone = req.body.phone;
         let lsRow = req.body.lsRow;
-        console.log(lsRow);
+        let keySource = req.body.keySource;
+        // send money
+        //if (utils.checkSendMoneyToAnother(100)) { // send money = false
+        //return res.status(500).send({ auth: false, error: true, message: "Thanh toán thất bại" });
+        //}
+
+        // update balance + chair
         let lsNum = new Array();
         for (var i = 0; i < lsRow.length; i++) {
             if (lsRow[i].row == 'A') {
@@ -188,19 +195,19 @@ router.post('/paymentMovie', async function (req, res, next) {
                 continue;
             }
         }
-        // send money
-        //if (utils.checkSendMoneyToAnother(100)) { // send money = false
-        //return res.status(500).send({ auth: false, error: true, message: "Thanh toán thất bại" });
-        //}
-        // update balance
         const db = req.app.get('db');
         for (var i = 0; i < lsNum.length; i++) {
             db.waterOther.UpdateChair(lsNum[i]);
         }
-        db.utilFuncs.updateDecreaseBalance(req.body.phone, Number.parseInt(req.body.money));
+        if (keySource == 0) {
+            db.utilFuncs.updateDecreaseBalance(req.body.phone, Number.parseInt(req.body.money));
+        }
+
         // add transaction
         db.utilFuncs.addTransaction(req.body.phone, null, "BIDV", Number.parseInt(req.body.money), 0, "Thanh toán", "Thanh toán vé xem phim", "paidWater", 1);
-        // return
+        console.log('3')
+
+        // res
         console.log('paymentMovie TRUE')
         let data = {
             message: ('Thanh toán thành công vé xem phim ' + money),
@@ -210,7 +217,6 @@ router.post('/paymentMovie', async function (req, res, next) {
         return res.status(200).send({ error: false, data: data });
     } catch (error) {
         console.log('paymentMovie FALSE')
-
         return res.status(500).send({ auth: false, error: true, message: "Server error" });
     }
 });
