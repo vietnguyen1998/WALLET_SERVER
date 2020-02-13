@@ -69,12 +69,24 @@ const register = async ({ sql, getConnection }) => {
         return request.query(sqlQueries.updateDecreaseBalance);
     };
 
+    const updateWaterBalance = async (id, money) => {
+        // get a connection to SQL Server
+        const cnx = await getConnection();
+        const request = await cnx.request();
+
+        request.input("id", sql.VarChar(50), id);
+        request.input("money", sql.Int, money);
+
+        return request.query(sqlQueries.updateWaterBalance);
+
+    };
     return {
         addTransaction,
         updateIncreaseBalance,
         updateDecreaseBalance,
         getIDTransaction,
-        getTransactionByID
+        getTransactionByID,
+        updateWaterBalance
     };
 }
 

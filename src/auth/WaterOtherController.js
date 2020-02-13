@@ -33,19 +33,28 @@ router.post('/customerInfo', async function (req, res, next) {
 
 router.post('/paymentWater', async function (req, res, next) {
     try {
+        // req
         let customerID = req.body.customerID;
         let money = req.body.money;
         let phone = req.body.phone;
+        let keySource = req.body.keySource;
+
         // send money
         //if (utils.checkSendMoneyToAnother(100)) { // send money = false
-            //return res.status(500).send({ auth: false, error: true, message: "Thanh toán thất bại" });
+        //return res.status(500).send({ auth: false, error: true, message: "Thanh toán thất bại" });
         //}
+
         // update balance
         const db = req.app.get('db');
-        db.utilFuncs.updateDecreaseBalance(req.body.phone, Number.parseInt(req.body.money));
+        if (keySource == 0) {
+            db.utilFuncs.updateDecreaseBalance(req.body.phone, Number.parseInt(req.body.money));
+        }
+        db.utilFuncs.updateWaterBalance(customerID, Number.parseInt(money));
+
         // add transaction
         db.utilFuncs.addTransaction(req.body.phone, null, "BIDV", Number.parseInt(req.body.money), 0, "Thanh toán", "Thanh toán tiền nước", "paidWater", 1);
-        // return
+
+        // res
         console.log('paymentPhones TRUE')
         let data = {
             message: ('Thanh toán thành công tiền nước ' + money),
@@ -70,7 +79,7 @@ router.post('/StudentInfo', async function (req, res, next) {
         let arr1 = new Array();
         if (result.recordset.length > 0) {
             for (var i = 0; i < result.recordset.length; i++) {
-                arr1.push(new Object({ yearSemi: ('Năm học: ' + result.recordset[i].Year + ', Học kỳ: ' + result.recordset[i].Semester), money: (result.recordset[i].Fee)}))
+                arr1.push(new Object({ yearSemi: ('Năm học: ' + result.recordset[i].Year + ', Học kỳ: ' + result.recordset[i].Semester), money: (result.recordset[i].Fee) }))
             }
             let data = new Object({ name: result.recordset[0].Name, studentID: result.recordset[0].StudentID, lsFee: arr1 });
 
