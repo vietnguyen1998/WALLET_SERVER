@@ -89,6 +89,14 @@ const register = async ({ sql, getConnection }) => {
 
         return request.query(sqlQueries.updateSchoolFee);
     };
+
+    const getAccountInfo = async (phone) => {
+        // get a connection to SQL Server
+        const cnx = await getConnection();
+        const request = await cnx.request();
+        request.input("phone", sql.VarChar(50), phone); 
+        return request.query(sqlQueries.getAccountInfo);
+    };
     return {
         addTransaction,
         updateIncreaseBalance,
@@ -96,7 +104,8 @@ const register = async ({ sql, getConnection }) => {
         getIDTransaction,
         getTransactionByID,
         updateWaterBalance,
-        updateSchoolFee
+        updateSchoolFee,
+        getAccountInfo,
     };
 }
 
