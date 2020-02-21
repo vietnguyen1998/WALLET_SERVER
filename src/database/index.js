@@ -5,6 +5,7 @@ const promotions = require("./Promotions");
 const notifications = require("./Notifications");
 const usersettings = require("./UserSettings");
 const utilFuncs = require("./UtilFuncs");
+const receiveTransfer = require("./ReceiveTransfer");
 const sql = require( "mssql" );
 const sqlServer = async ( config ) => {
     let pool = null;
@@ -54,6 +55,7 @@ const sqlServer = async ( config ) => {
         usersettings: await usersettings.register({ sql, getConnection }),
         notifications: await notifications.register({ sql, getConnection }),
         utilFuncs: await utilFuncs.register({ sql, getConnection }),
+        receivetransfer : await receiveTransfer.register({ sql, getConnection })
     };
 };
 

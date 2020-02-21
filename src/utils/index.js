@@ -29,12 +29,15 @@ const loadSqlQueries = async (module, folderName) => {
 const verifyToken = (req, res, next) => {
 
     // check header or url parameters or post parameters for token
-    var token = req.headers['x-access-token'];
+    var token = req.headers['authorization'];
+    token = token.replace('Bearer ', '');
+    console.log(req.headers['authorization'])
     if (!token)
-        return res.status(403).send({ auth: false, errmessage: 'No token provided.' });
+        return res.status(500).send({ auth: false, errmessage: 'No token provided.' });
 
     // verifies secret and checks exp
     jwt.verify(token, config.secret, function (err, decoded) {
+        console.log(err)
         if (err)
             return res.status(500).send({ auth: false, errmessage: err });
 
@@ -133,19 +136,21 @@ const parse8583IntoData = (data) => {
 //Format date is dd/mm/yy (response string is DDMMYY)
 //Format time is HH:mm(response string is HHmm)
 const checkSendMoneyToAnother = (money) => {
-    let data = utils.parseInto8583(money);
-    let dataResponse = utils.response8583Data(data);
+    let data = parseInto8583(money);
+    let dataResponse = response8583Data(data);
     //parse response data (this is final reponse json)
-    let finalData = utils.parse8583IntoData(dataResponse);
+    let finalData = parse8583IntoData(dataResponse);
     return finalData;
 }
-//get current time and parse it into iso_8583 format 
+//get current time and parse it into iso_8583 format (-1 will get full )
 const getTime = (fieldNumber) => {
     const time = new Date();
-    let result;
+    let result = '';
     if (fieldNumber == 7) result = formatd(time, 'DDMMYYHHmm');
     if (fieldNumber == 12) result = formatd(time, 'HHmmss');
     if (fieldNumber == 13) result = formatd(time, 'DDMM');
+    if (fieldNumber == -1) result = formatd(time, 'YYYY-MM-DD HH:mm')
+    result = result === '' ? formatd(time, 'YYYY-MM-DD HH:mm') : result;
     return result;
 };
 
@@ -155,5 +160,6 @@ module.exports = {
     parseInto8583,
     response8583Data,
     parse8583IntoData,
-    checkSendMoneyToAnother
+    checkSendMoneyToAnother,
+    getTime
 };

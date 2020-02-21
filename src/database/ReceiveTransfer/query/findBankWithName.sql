@@ -1,0 +1,1 @@
+select BankID,BankName,BankShortName from [dbo].[Banks] where UPPER(BankShortName) = UPPER(@namebank)

@@ -19,7 +19,6 @@ router.post('/', async function (req, res, next) {
 
         let money = req.body.money;
         let data = utils.parseInto8583(money);
-        console.log(data)
         let dataResponse = utils.response8583Data(data);
         //parse response data (this is final reponse json)
         let finalData = utils.parse8583IntoData(dataResponse);

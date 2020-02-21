@@ -1,0 +1,1 @@
+SELECT BankAccountID from BankAccounts where BankID= @bankID AND AccountID =@accountID

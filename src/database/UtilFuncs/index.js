@@ -6,12 +6,13 @@ const register = async ({ sql, getConnection }) => {
     // read in all the .sql files for this folder
     const sqlQueries = await utils.loadSqlQueries("UtilFuncs", "query");
 
-    const addTransaction = async (phone, servicesID, sourceBalance, amount, transactionFee, content, infomationServices, otherInfomation, status) => {
+    const addTransaction = async (phone, servicesID, sourceBalance, amount, transactionFee, content, infomationServices, otherInfomation, status,time) => {
         // get a connection to SQL Server
         const cnx = await getConnection();
         const request = await cnx.request();
 
         // get current date
+        if(time === undefined || time===null){
         var today = new Date();
         var dd = today.getDate();
         var mm = today.getMonth() + 1; //January is 0!
@@ -19,7 +20,8 @@ const register = async ({ sql, getConnection }) => {
         if (dd < 10) {dd = '0' + dd}
         if (mm < 10) {   mm = '0' + mm  }
         today = mm + '/' + dd + '/' + yyyy;
-
+        }else today=time;
+        
         request.input("phone", sql.VarChar(50), phone);
         request.input("servicesID", sql.VarChar(128), servicesID);
         request.input("sourceBalance", sql.NVarChar(128), sourceBalance);
@@ -56,6 +58,18 @@ const register = async ({ sql, getConnection }) => {
 
         return request.query(sqlQueries.updateDecreaseBalance);
     };
+
+    const addNotify = async (phone, GroupId,Title,Description,DateStart,DateEnd,Status) => {
+        // get a connection to SQL Server
+        const cnx = await getConnection();
+        const request = await cnx.request();
+
+        request.input("phone", sql.VarChar(50), phone); 
+        request.input("number", sql.BigInt, number);
+
+        return request.query(sqlQueries.updateDecreaseBalance);
+    };
+
 
     return {
         addTransaction,

@@ -20,6 +20,7 @@
     "iso_8583": "^2.6.4",
     "jsonwebtoken": "^7.4.1",
     "mongoose": "^4.8.5",
-    "mssql": "^4.3.2"
+    "mssql": "^4.3.2",
+    "nodemailer": "^6.4.2"
   }
 }
