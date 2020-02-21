@@ -36,15 +36,28 @@ const register = async ({ sql, getConnection }) => {
         return request.query(sqlQueries.addTransaction);
     };
 
+    const getIDTransaction = async (phone) => {
+        // get a connection to SQL Server
+        const cnx = await getConnection();
+        const request = await cnx.request();
+        request.input("phone", sql.VarChar(50), phone);
+        return request.query(sqlQueries.getIDTransaction);
+    };
+
+    const getTransactionByID = async (phone) => {
+        // get a connection to SQL Server
+        const cnx = await getConnection();
+        const request = await cnx.request();
+        request.input("transaction_id", sql.Int, phone);
+        return request.query(sqlQueries.getTransactionByID);
+    };
+
     const updateIncreaseBalance = async (phone, number) => {
         // get a connection to SQL Server
         const cnx = await getConnection();
         const request = await cnx.request();
-        console.log('hi1')
         request.input("phone", sql.VarChar(50), phone); 
         request.input("number", sql.BigInt, number);
-        console.log('hi2')
-
         return request.query(sqlQueries.updateIncreaseBalance);
     };
 
@@ -70,11 +83,43 @@ const register = async ({ sql, getConnection }) => {
         return request.query(sqlQueries.updateDecreaseBalance);
     };
 
+    const updateWaterBalance = async (id, money) => {
+        // get a connection to SQL Server
+        const cnx = await getConnection();
+        const request = await cnx.request();
 
+        request.input("id", sql.VarChar(50), id);
+        request.input("money", sql.Int, money);
+
+        return request.query(sqlQueries.updateWaterBalance);
+
+    };
+    const updateSchoolFee = async (student_id) => {
+        // get a connection to SQL Server
+        const cnx = await getConnection();
+        const request = await cnx.request();
+
+        request.input("student_id", sql.VarChar(50), student_id);
+
+        return request.query(sqlQueries.updateSchoolFee);
+    };
+
+    const getAccountInfo = async (phone) => {
+        // get a connection to SQL Server
+        const cnx = await getConnection();
+        const request = await cnx.request();
+        request.input("phone", sql.VarChar(50), phone); 
+        return request.query(sqlQueries.getAccountInfo);
+    };
     return {
         addTransaction,
         updateIncreaseBalance,
         updateDecreaseBalance,
+        getIDTransaction,
+        getTransactionByID,
+        updateWaterBalance,
+        updateSchoolFee,
+        getAccountInfo,
     };
 }
 

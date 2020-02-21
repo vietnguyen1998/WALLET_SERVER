@@ -1,4 +1,4 @@
-var express = require('express');
+﻿var express = require('express');
 var router = express.Router();
 var bodyParser = require('body-parser');
 var utils = require('../utils');
@@ -38,6 +38,7 @@ router.post('/getNotifications', async function (req, res, next) {
     }
 });
 
+
 router.post('/getTransactions', async function (req, res, next) {
     try {
         const db = req.app.get('db');
@@ -68,6 +69,24 @@ router.post('/getTransactions', async function (req, res, next) {
     }
 });
 
+router.post('/getBankNames', async function (req, res, next) {
+    try {
+        const db = req.app.get('db');
+        const result = await db.notifications.getBankNames(req.body.phone);
+        var sample = new Array();
+        sample.push({ key: 0, name: "me" });
+
+        for (var i = 0; i < result.recordset.length; i++) {
+            sample.push({ key: (i + 1), name: result.recordset[i].BankName });
+        }
+
+        res.status(200).send({ auth: true, error: false, data: sample });
+        console.log("getBankNames TRUE");
+    } catch (error) {
+        return res.status(500).send({ auth: false, error: true, errmessage: "some error1!" });
+    }
+});
+
 router.post('/getNotifications2', async function (req, res, next) {
     try {
         const db = req.app.get('db');
@@ -75,6 +94,16 @@ router.post('/getNotifications2', async function (req, res, next) {
         //result = await db.utilFuncs.updateDecreaseBalance(req.body.phone, 100);
         const result = await db.utilFuncs.addTransaction(req.body.phone, 22, "BIDV", 22, 22, "22", "22", "recharge", 1);
         return res.status(200).send({ auth: true, error: false, data: result });
+    } catch (error) {
+        return res.status(500).send({ auth: false, error: true, errmessage: "some error" });
+    }
+});
+
+router.post('/getAccountInfo', async function (req, res, next) {
+    try {
+        const db = req.app.get('db');
+        const result = await db.utilFuncs.getAccountInfo(req.body.phone);
+        return res.status(200).send({ auth: true, error: false, data: result.recordset[0] });
     } catch (error) {
         return res.status(500).send({ auth: false, error: true, errmessage: "some error" });
     }

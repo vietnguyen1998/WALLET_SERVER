@@ -9,4 +9,3 @@ SELECT TOP (10) [NotificationID]
       ,[Image]
       ,[Status]
 FROM [wallet].[dbo].[Notifications]
-WHERE [AccountID] = (SELECT [AccountID] From [wallet].[dbo].[Accounts] Where [Phone] = @phone) 

@@ -1,5 +1,5 @@
 /****** Script for SelectTopNRows command from SSMS  ******/
-SELECT [TransactionID]
+SELECT TOP (1) [TransactionID]
       ,[AccountID]
       ,[ServicesID]
       ,[SourceBalance]
@@ -10,6 +10,5 @@ SELECT [TransactionID]
       ,[InfomationServices]
       ,[OtherInfomation]
       ,[Status]
-FROM [wallet].[dbo].[Transactions]
-WHERE [AccountID] = (SELECT [AccountID] From [wallet].[dbo].[Accounts] Where [Phone] = @phone) 
-ORDER BY [CreateDate] DESC
+  FROM [wallet].[dbo].[Transactions]
+  where [TransactionID] = @transaction_id

@@ -16,38 +16,83 @@ var config = require('../../config'); // get config file
 
 router.post('/paymentPhoneCart', async function (req, res, next) {
     try {
-        network = req.body.network;
-        phone = req.body.phone;
-        money = req.body.money;
+        // rea
+        let network = req.body.network;
+        let phone = req.body.phone;
+        let money = req.body.money;
+        let keySource = req.body.keySource;
 
-        let seri = '';
-        let cardNum = '';
-        for (var i = 0; i < 13; i++) {
-            seri += '' + Math.floor(Math.random() * 10) + '';
-        }
-        for (var i = 0; i < 12; i++) {
-            cardNum += '' + Math.floor(Math.random() * 10) + '';
-        }
-        if (!utils.checkSendMoneyToAnother(1000)) { // send money = false
-            // response 
-            return res.status(500).send({ auth: false, error: true, message: "Thanh toán thất bại" });
-        }
+        // sent money bank
+        //if (!utils.checkSendMoneyToAnother(req.body.money)) { // send money = false
+        // response 
+        //return res.status(500).send({ auth: false, error: true, message: "Thanh toán thất bại" });
+        //}
+
         // update balance
         const db = req.app.get('db');
-        db.utilFuncs.updateDecreaseBalance(req.body.phone, Number.parseInt(req.body.money));
-        // return TRUE
-        return res.status(200).send({ error: false, seriNum: seri, cardNum: cardNum, message: ('Thanh toán thành công thẻ Viettel ' + req.body.money) });
+        if (keySource == 0) {
+            console.log(keySource)
+            db.utilFuncs.updateDecreaseBalance(req.body.phone, Number.parseInt(req.body.money));
+        }
+
+        // add transaction
+        await db.utilFuncs.addTransaction(req.body.phone, 'Phone01', network, Number.parseInt(req.body.money), 0, "Thanh toán", "Mua thẻ điện thoại", "paidCardPhone", 2);
+
+        // res
+        let seri = '';
+        let cardNum = '';
+        var i;
+        for (i = 0; i < 13; i++) {
+            seri += '' + Math.floor(Math.random() * 10) + '';
+        }
+        for (i = 0; i < 12; i++) {
+            cardNum += '' + Math.floor(Math.random() * 10) + '';
+        }
+        console.log('paymentPhoneCart TRUE')
+        let data = {
+            seriNum: seri,
+            cardNum: cardNum,
+            message: ('Thanh toán thành công thẻ Viettel ' + money),
+            money: money,
+            phone: phone,
+            network: network,
+        }
+        return res.status(200).send({ error: false, data: data });
     } catch (error) {
-        return res.status(500).send({ auth: false, error: true, message: "Thanh toán thất bại" });
+        db.utilFuncs.addTransaction(req.body.phone, 'Phone01', network, Number.parseInt(req.body.money), 0, "Thanh toán", "Mua thẻ điện thoại", "paidCardPhone", 0);
+        return res.status(500).send({ auth: false, error: true, message: "Server error" });
     }
 });
 
 router.post('/paymentPhone', async function (req, res, next) {
     try {
+        // req
         network = req.body.network;
         phone = req.body.phone;
+        phoneSend = req.body.phoneSend;
         money = req.body.money;
+        let keySource = req.body.keySource;
 
+        // send money bank
+        //if (utils.checkSendMoneyToAnother(100)) { // send money = false
+        // response 
+        //return res.status(500).send({ auth: false, error: true, message: "Thanh toán thất bại" });
+        //}
+
+        // send message to client 
+        // todo 
+
+        // update balance
+        const db = req.app.get('db');
+        if (keySource == 0) {
+            console.log(keySource)
+            db.utilFuncs.updateDecreaseBalance(req.body.phone, Number.parseInt(req.body.money));
+        }
+
+        // add transaction
+        db.utilFuncs.addTransaction(req.body.phone, null, "VinaPhone", Number.parseInt(req.body.money), 0, "Thanh toán", "Mua thẻ điện thoại", "paidCardPhone", 1);
+
+        // res
         let seri = '';
         let cardNum = '';
         for (var i = 0; i < 13; i++) {
@@ -56,18 +101,19 @@ router.post('/paymentPhone', async function (req, res, next) {
         for (var i = 0; i < 12; i++) {
             cardNum += '' + Math.floor(Math.random() * 10) + '';
         }
-        if (false) { // send money = false
-            // response 
-            return res.status(500).send({ auth: false, error: true, message: "Thanh toán thất bại" });
+        console.log('paymentPhones TRUE')
+        let data = {
+            seriNum: seri,
+            cardNum: cardNum,
+            message: ('Thanh toán thành công thẻ điện thoại ' + money),
+            money: money,
+            phone: phone,
+            network: network,
+            phoneSend: phoneSend
         }
-        // send a messager to phone
-        // update balance
-        const db = req.app.get('db');
-        db.utilFuncs.updateDecreaseBalance(req.body.phone, Number.parseInt(req.body.money));
-        // return TRUE
-        return res.status(200).send({ error: false, seriNum: seri, cardNum: cardNum, message: ('Thanh toán thành công thẻ Viettel ' + req.body.money) });
+        return res.status(200).send({ error: false, data: data });
     } catch (error) {
-        return res.status(500).send({ auth: false, error: true, message: "Thanh toán thất bại" });
+        return res.status(500).send({ auth: false, error: true, message: "Server error" });
     }
 });
 
