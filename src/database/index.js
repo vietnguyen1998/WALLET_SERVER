@@ -57,7 +57,7 @@ const sqlServer = async ( config ) => {
         usersettings: await usersettings.register({ sql, getConnection }),
         notifications: await notifications.register({ sql, getConnection }),
         utilFuncs: await utilFuncs.register({ sql, getConnection }),
-        receivetransfer : await receiveTransfer.register({ sql, getConnection })
+        receivetransfer : await receiveTransfer.register({ sql, getConnection }),
         waterOther: await waterOther.register({ sql, getConnection }),
     };
 };
