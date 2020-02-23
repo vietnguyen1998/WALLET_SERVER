@@ -1,23 +1,23 @@
 
 var sendSMS = require('../sendSMS')
 
-let storeOTP ={}
+let storeOTP = {}
 
-const timeExpried = 40000 ; // 40s
+const timeExpried = 40000; // 40s
 
-const random6Digits = () =>{
+const random6Digits = () => {
     return 100000 + Math.floor(Math.random() * 900000);
 }
 
 
 const cleanUpStore = async () => {
-	const now = new Date();
+    const now = new Date();
 
-	Object.entries(storeOTP).forEach(([key, value]) => {
+    Object.entries(storeOTP).forEach(([key, value]) => {
 
-		if(now > value.expireTime)
-			delete storeOTP[key];
-	});
+        if (now > value.expireTime)
+            delete storeOTP[key];
+    });
 };
 
 //get Password
@@ -26,41 +26,44 @@ const getPassword = async ({ phone }) => storeOTP[phone];
 //delete OTP
 const deleteOTP = async ({ phone }) => delete storeOTP[phone];
 
-const createOTP = async (idPhone,phone) => {
-        
-		let otp = random6Digits();
-		
-		// sendSMS.sendSMS(phone,`Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi. Mã OTP là ${randomOTP}. Thời hạn của tin là 5 phút`);
+const createOTP = async (idPhone, phone) => {
 
-		const OTPdata = {
-			idPhone,
-			phone, otp,
-			expireTime:  new Date(new Date().valueOf() + timeExpried),
-		};
+    let otp = random6Digits();
+    try {
+        //sendSMS.sendSMS(phone, `Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi. Mã OTP là ${randomOTP}. Thời hạn của tin là 5 phút`);
+    } catch (e) {
+        continue;
+    }
 
-		storeOTP[phone] = OTPdata;
+    const OTPdata = {
+        idPhone,
+        phone, otp,
+        expireTime: new Date(new Date().valueOf() + timeExpried),
+    };
 
-		return OTPdata;
+    storeOTP[phone] = OTPdata;
+
+    return OTPdata;
 };
 
-const verifyOTP = async ( phone,uniqueId, OTP ) => { 
+const verifyOTP = async (phone, uniqueId, OTP) => {
 
-	const stored= storeOTP[phone];
+    const stored = storeOTP[phone];
 
-    if(stored && OTP == stored.otp && uniqueId == stored.idPhone &&  (new Date() < stored.expireTime)){
+    if (stored && OTP == stored.otp && uniqueId == stored.idPhone && (new Date() < stored.expireTime)) {
 
-		// deleteOTP(phone);
+        // deleteOTP(phone);
         return true;
-    }else {
+    } else {
         return false;
     }
-    
+
 };
 
 
 module.exports = {
     createOTP,
-	random6Digits,
-	verifyOTP,
-	cleanUpStore
+    random6Digits,
+    verifyOTP,
+    cleanUpStore
 };
