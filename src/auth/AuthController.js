@@ -19,46 +19,82 @@ var bcrypt = require('bcryptjs');
 var salt = bcrypt.genSaltSync(10);
 var config = require('../../config'); // get config file
 
+// router.post('/login', async function (req, res) {
+//   try {
+//     const db = req.app.get('db');
+//     //check is in black list
+//     let dataBlackList = await blacklist.isInBlackList(req.body.phone)
+//     if (dataBlackList !== null) {
+//       return res.status(200).send({ auth: false, error: 'blacklist', data: dataBlackList });
+//     }
+//     // const result = bcrypt.compareSync('my password', hash)
+//     const result = await db.accounts.auth(req.body.phone);
+//     if (result.recordset.length > 0) {
+//       console.log(result.recordset[0].Password + ' ' + req.body.password)
+//       let check = await bcrypt.compareSync(req.body.password, result.recordset[0].Password);
+//       //check this user alredy has 3 different device
+//       console.log(check)
+//       if (check) {
+//         const info = await db.accounts.getInfo(req.body.phone);
+//         if (info.recordset.length > 0) {
+//           var token = jwt.sign({ phone: req.body.phone }, config.secret, {
+//             expiresIn: '1h' // expires in 24 hours
+//           });
+//           //update last login date
+//           const uniqueID = req.body.uniqueID;
+//           const accountID = info.recordset[0].AccountID
+//           await db.accounts.updateLoginTime(accountID, uniqueID)
+//           //delete in black list
+//           await blacklist.deletePhone(req.body.phone);
+//           delete result.recordset[0]['Password']
+//           res.status(200).send({ auth: true, token: token, error: false,data :result.recordset[0] });
+//         }
+//       }
+//       else res.status(200).send({ auth: false, token: null, error: true, errmessage: "Some error when get information. Please try again later!" });
+//     } else {
+//       return res.status(200).send({ auth: false, token: null, error: true, errmessage: "User or password wrong" });
+//     }
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(500).send({ auth: false, token: null, error: true, errmessage: error });
+//   }
+// });
 router.post('/login', async function (req, res) {
-  try {
-    const db = req.app.get('db');
-    //check is in black list
-    let dataBlackList = await blacklist.isInBlackList(req.body.phone)
-    if (dataBlackList !== null) {
-      return res.status(200).send({ auth: false, error: 'blacklist', data: dataBlackList });
-    }
-    // const result = bcrypt.compareSync('my password', hash)
-    const result = await db.accounts.auth(req.body.phone);
-    if (result.recordset.length > 0) {
-      console.log(result.recordset[0].Password + ' ' + req.body.password)
-      let check = await bcrypt.compareSync(req.body.password, result.recordset[0].Password);
-      //check this user alredy has 3 different device
-      console.log(check)
-      if (check) {
-        const info = await db.accounts.getInfo(req.body.phone);
-        if (info.recordset.length > 0) {
-          var token = jwt.sign({ phone: req.body.phone }, config.secret, {
-            expiresIn: '1h' // expires in 24 hours
-          });
-          //update last login date
-          const uniqueID = req.body.uniqueID;
-          const accountID = info.recordset[0].AccountID
-          await db.accounts.updateLoginTime(accountID, uniqueID)
-          //delete in black list
-          await blacklist.deletePhone(req.body.phone);
-          delete result.recordset[0]['Password']
-          res.status(200).send({ auth: true, token: token, error: false,data :result.recordset[0] });
-        }
+    try {
+      const db = req.app.get('db');
+      //check is in black list
+      let dataBlackList = await blacklist.isInBlackList(req.body.phone)
+      if (dataBlackList !== null) {
+        return res.status(200).send({ auth: false, error: 'blacklist', data: dataBlackList });
       }
-      else res.status(200).send({ auth: false, token: null, error: true, errmessage: "Some error when get information. Please try again later!" });
-    } else {
-      return res.status(200).send({ auth: false, token: null, error: true, errmessage: "User or password wrong" });
+      // const result = bcrypt.compareSync('my password', hash)
+      const result = await db.accounts.auth(req.body.phone,req.body.password);
+      if (result.recordset.length > 0) {
+        //check this user alredy has 3 different device
+          const info = await db.accounts.getInfo(req.body.phone);
+          if (info.recordset.length > 0) {
+            var token = jwt.sign({ phone: req.body.phone }, config.secret, {
+              expiresIn: '1h' // expires in 24 hours
+            });
+            //update last login date
+            const uniqueID = req.body.uniqueID;
+            const accountID = info.recordset[0].AccountID
+            await db.accounts.updateLoginTime(accountID, uniqueID)
+            //delete in black list
+            await blacklist.deletePhone(req.body.phone);
+            delete result.recordset[0]['Password']
+            res.status(200).send({ auth: true, token: token, error: false,data :result.recordset[0] });
+        }
+        else res.status(200).send({ auth: false, token: null, error: true, errmessage: "Some error when get information. Please try again later!" });
+      } else {
+        return res.status(200).send({ auth: false, token: null, error: true, errmessage: "User or password wrong" });
+      }
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send({ auth: false, token: null, error: true, errmessage: error });
     }
-  } catch (error) {
-    console.log(error);
-    return res.status(500).send({ auth: false, token: null, error: true, errmessage: error });
-  }
-});
+  });
+
 router.post('/addblacklist', async function (req, res) {
   try {
 
@@ -71,19 +107,16 @@ router.post('/addblacklist', async function (req, res) {
 router.post('/sendnewpassword', async function (req, res) {
   try {
     const newpassword = otp.random6Digits();
-
-    let data = await sendemail.sendMail('lekhangcaltex0811@gmail.com', 'Mat khau moi cua ban la' + newpassword)
-    console.log(req.body.phone)
-    console.log(data)
+    let data = await sendemail.sendMail(req.body.email, 'Mat khau moi cua ban la' + newpassword)
+    let cryptedPass = await bcrypt.hash(newpassword, salt)
     if (data) {
       const db = req.app.get('db');
-      let result = await db.accounts.updatePassword(req.body.phone, newpassword);
+      let result = await db.accounts.updatePassword(req.body.phone, cryptedPass);
       if (result.rowsAffected[0] > 0) {
-        return res.status(200).send({ success: true, data: newpassword });
+        return res.status(200).send({ success: true });
       }
-    } else return res.status(200).send({ success: false, data: newpassword });
+    } else return res.status(200).send({ success: false});
   } catch (error) {
-    console.log(error);
     return res.status(500).send({ success: false });
   }
 });
