@@ -32,7 +32,7 @@ const createOTP = async (idPhone, phone) => {
     try {
         //sendSMS.sendSMS(phone, `Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi. Mã OTP là ${randomOTP}. Thời hạn của tin là 5 phút`);
     } catch (e) {
-        continue;
+        //continue;
     }
 
     const OTPdata = {
