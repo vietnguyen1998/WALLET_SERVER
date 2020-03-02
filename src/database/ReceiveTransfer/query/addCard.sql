@@ -1,3 +1,3 @@
 
 INSERT INTO [dbo].[BankAccounts]
-VALUES (@bankID,'BankType1',@accountID,@bankinfo,@time)
+VALUES (NULL,@bankID,'BankType1',@bankinfo,@accountID,@time,1)

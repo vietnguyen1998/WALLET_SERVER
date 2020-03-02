@@ -6,7 +6,7 @@ const register = async ({ sql, getConnection }) => {
     // read in all the .sql files for this folder
     const sqlQueries = await utils.loadSqlQueries("UtilFuncs", "query");
 
-    const addTransaction = async (phone, servicesID, sourceBalance, amount, transactionFee, content, infomationServices, otherInfomation, status,time) => {
+    const addTransaction = async (phone, servicesID, sourceBalance, amount, transactionFee, content, infomationServices, otherInfomation, status,time,param) => {
         // get a connection to SQL Server
         const cnx = await getConnection();
         const request = await cnx.request();
@@ -31,6 +31,7 @@ const register = async ({ sql, getConnection }) => {
         request.input("content", sql.VarChar(255), content);
         request.input("infomationServices", sql.NVarChar(128), infomationServices);
         request.input("otherInfomation", sql.NVarChar(128), otherInfomation);
+        request.input("param", sql.NVarChar(128), param);
         request.input("status", sql.BigInt, status);
 
         return request.query(sqlQueries.addTransaction);

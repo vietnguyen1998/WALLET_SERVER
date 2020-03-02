@@ -69,6 +69,7 @@ router.post('/getlistbanklinked', utils.verifyToken, async function (req, res) {
                 })
             );
         }
+        console.log(data)
         res.status(200).send({ error: false, data: data });
 
     } catch (error) {
@@ -132,15 +133,17 @@ router.post('/getlistpeoplesend', utils.verifyToken, async function (req, res, n
         const result = await db.receivetransfer.GetListPeopleSend(phone);
         let data = new Array();
         for (let i = 0; i < result.recordset.length; i++) {
-            let dataget = result.recordset[i].OtherInformation.split('-');
-            data.push(
+            let dataget = result.recordset[i].OtherInformation
+            nameUser= await  db.accounts.getInfo(dataget);
+            data.push(        
                 new Object({
                     key: i,
-                    name: dataget[1],
-                    SDT: dataget[0],
+                    name: nameUser.recordset[0].AccountName,
+                    SDT: dataget
                 })
             );
         }
+        console.log(data)
         res.status(200).send({ error: false, data: data });
 
     } catch (error) {
