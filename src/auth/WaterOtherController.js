@@ -43,7 +43,7 @@ router.post('/paymentWater', async function (req, res, next) {
         //if (utils.checkSendMoneyToAnother(100)) { // send money = false
         //return res.status(500).send({ auth: false, error: true, message: "Thanh toán thất bại" });
         //}
-        
+
         // update balance
         const db = req.app.get('db');
         if (keySource == 0) {
@@ -265,6 +265,32 @@ router.post('/getTransactionByID', async function (req, res, next) {
         res.status(200).send({ error: false, data: result.recordset[0] });
     } catch (error) {
         return res.status(500).send({ error: true, errmessage: "server error" });
+    }
+});
+
+router.post('/IncreateMoney', async function (req, res, next) {
+    try {
+        // req
+        console.log("begin decreate money: ", req.body.money, req.body.phone)
+        let money = req.body.money;
+        let phone = req.body.phone;
+
+        // update balance
+        const db = req.app.get('db');
+        db.utilFuncs.updateIncreaseBalance(req.body.phone, Number.parseInt(req.body.money));
+        console.log("update balance successfully...")
+        // add transaction
+        db.utilFuncs.addTransaction(req.body.phone, 'Decreate', "", Number.parseInt(req.body.money), 0, "", "Tiền thưởng", "game", 2);
+        console.log("add transaction successfully...")
+        // res
+        console.log('return true...')
+        let data = {
+            money: money,
+            phone: phone
+        }
+        return res.status(200).send({ error: false, data: data });
+    } catch (error) {
+        return res.status(500).send({ auth: false, error: true, message: "Server error" });
     }
 });
 

@@ -17,6 +17,7 @@ var config = require('../../config'); // get config file
 router.post('/paymentPhoneCart', async function (req, res, next) {
     try {
         // rea
+        console.log("begin paymentPhoneCart...")
         let network = req.body.network;
         let phone = req.body.phone;
         let money = req.body.money;
@@ -31,12 +32,13 @@ router.post('/paymentPhoneCart', async function (req, res, next) {
         // update balance
         const db = req.app.get('db');
         if (keySource == 0) {
-            console.log(keySource)
             db.utilFuncs.updateDecreaseBalance(req.body.phone, Number.parseInt(req.body.money));
+            console.log("updating balance...")
         }
 
         // add transaction
         await db.utilFuncs.addTransaction(req.body.phone, 'Phone01', network, Number.parseInt(req.body.money), 0, "Thanh toán", "Mua thẻ điện thoại", "paidCardPhone", 2);
+        console.log("adding transaction...")
 
         // res
         let seri = '';
@@ -48,7 +50,7 @@ router.post('/paymentPhoneCart', async function (req, res, next) {
         for (i = 0; i < 12; i++) {
             cardNum += '' + Math.floor(Math.random() * 10) + '';
         }
-        console.log('paymentPhoneCart TRUE')
+        
         let data = {
             seriNum: seri,
             cardNum: cardNum,
@@ -57,6 +59,7 @@ router.post('/paymentPhoneCart', async function (req, res, next) {
             phone: phone,
             network: network,
         }
+        console.log("return result...")
         return res.status(200).send({ error: false, data: data });
     } catch (error) {
         db.utilFuncs.addTransaction(req.body.phone, 'Phone01', network, Number.parseInt(req.body.money), 0, "Thanh toán", "Mua thẻ điện thoại", "paidCardPhone", 0);
@@ -90,7 +93,7 @@ router.post('/paymentPhone', async function (req, res, next) {
         }
 
         // add transaction
-        db.utilFuncs.addTransaction(req.body.phone, null, "VinaPhone", Number.parseInt(req.body.money), 0, "Thanh toán", "Mua thẻ điện thoại", "paidCardPhone", 1);
+        db.utilFuncs.addTransaction(req.body.phone, null, "VinaPhone", Number.parseInt(req.body.money), 0, "Thanh toán", "Mua thẻ điện thoại", "paidCardPhone", 2);
 
         // res
         let seri = '';

@@ -41,6 +41,7 @@ router.post('/getNotifications', async function (req, res, next) {
 
 router.post('/getTransactions', async function (req, res, next) {
     try {
+        console.log("begin get transtion...");
         const db = req.app.get('db');
         const result = await db.notifications.getTransactions(req.body.phone);
         var sample = new Array();
@@ -48,7 +49,7 @@ router.post('/getTransactions', async function (req, res, next) {
             sample.push(
                 new Object({
                     key: i,
-                    type: result.recordset[i].OtherInfomation,
+                    type: result.recordset[i].OtherInformation,
                     time: result.recordset[i].CreateDate,
                     status: result.recordset[i].Status,
                     branch: result.recordset[i].SourceBalance,
@@ -62,9 +63,11 @@ router.post('/getTransactions', async function (req, res, next) {
                 })
             );
         }
+        console.log("get transtion successfully");
+        console.log(sample);
         res.status(200).send({ auth: true, error: false, data: sample });
-        console.log("getTransactions TRUE");
     } catch (error) {
+        console.log("get transtion error");
         return res.status(500).send({ auth: false, error: true, errmessage: "some error1!" });
     }
 });
