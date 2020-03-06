@@ -7,7 +7,7 @@ INSERT INTO [Devices]
         [DevicesID]
        ,[AccountID]
       ,[UniqueID]
-      ,[DeviceName]
+      ,[DevicesName]
       ,[LastLoginDate]
       ,[Status]
 
