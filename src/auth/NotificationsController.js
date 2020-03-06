@@ -38,7 +38,7 @@ router.post('/getNotifications', async function (req, res, next) {
     }
 });
 
-
+// http://localhost:8080/api/notifications/getTransactions/
 router.post('/getTransactions', async function (req, res, next) {
     try {
         console.log("begin get transtion...");
@@ -64,7 +64,6 @@ router.post('/getTransactions', async function (req, res, next) {
             );
         }
         console.log("get transtion successfully");
-        console.log(sample);
         res.status(200).send({ auth: true, error: false, data: sample });
     } catch (error) {
         console.log("get transtion error");

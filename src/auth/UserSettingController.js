@@ -44,6 +44,10 @@ router.get('/getUserSettingInfomation', async function (req, res) {
     }
 });
 
+//http://localhost:8080/api/user/GetUserInfos/
+//{
+//    "phone": "0999999999"
+//}
 router.post('/GetUserInfos', async function (req, res) {
     try {
         const db = req.app.get('db');
