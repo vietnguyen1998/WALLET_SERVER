@@ -26,9 +26,18 @@ const register = async ( { sql, getConnection } ) => {
         return request.query(sqlQueries.PromotionInfoNew);
     };
 
+    const CheckCode = async (code) => {
+        // get a connection to SQL Server
+        const cnx = await getConnection();
+        const request = await cnx.request();
+        request.input("code", sql.VarChar(50), code);
+        return request.query(sqlQueries.CodePromotion);
+    };
+
     return {
         PromotionInfo,
-        PromotionInfoNew
+        PromotionInfoNew,
+        CheckCode
     };
 };
 

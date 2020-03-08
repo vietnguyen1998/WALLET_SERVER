@@ -60,4 +60,18 @@ router.get('/getPromotionInfoNew', async function (req, res, next) {
     }
 });
 
+// http://localhost:8080/api/promotion/CheckCode
+router.post('/CheckCode', async function (req, res, next) {
+    console.log("begin check code...");
+    try {
+        const db = req.app.get('db');
+        console.log("return check code...");
+        const result = await db.promotions.CheckCode(req.body.code);
+        res.status(200).send({ auth: true, error: false, data: result.recordsets[0] });
+    } catch (error) {
+        console.log("return catch check code...");
+        return res.status(500).send({ auth: false, error: true, errmessage: "some error1!" });
+    }
+});
+
 module.exports = router;
