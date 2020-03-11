@@ -55,9 +55,17 @@ const register = async ( { sql, getConnection } ) => {
         request.input( "accountID", sql.VarChar( 128 ), accountID  );
         return request.query(sqlQueries.findBankWithNameAndAccount );
     };
+
+    const removeBankAccount= async (phone,bankName) => {
+        const cnx = await getConnection();
+        const request = await cnx.request();
+        request.input( "BankName", sql.VarChar( 128 ), bankName  );
+        request.input( "phone", sql.VarChar( 128 ), phone  );
+        return request.query(sqlQueries.removeBankAccount);
+    };
     
     return {
-        GetListBanks,GetListBanksLinked,GetListPeopleSend,AddCard,GetBankID,GetBankAccountID,GetListBanksHasntLinked
+        GetListBanks,GetListBanksLinked,GetListPeopleSend,AddCard,GetBankID,GetBankAccountID,GetListBanksHasntLinked, removeBankAccount
     };
 };
 

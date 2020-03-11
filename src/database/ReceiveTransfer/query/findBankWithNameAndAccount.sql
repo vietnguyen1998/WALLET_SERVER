@@ -1,1 +1,1 @@
-SELECT BankAccountID from BankAccounts where BankID= @bankID AND AccountID =@accountID
+SELECT BankAccountID from BankAccounts where BankID= @bankID AND AccountID =@accountID AND [Status]=1

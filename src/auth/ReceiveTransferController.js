@@ -134,8 +134,8 @@ router.post('/getlistpeoplesend', utils.verifyToken, async function (req, res, n
         let data = new Array();
         for (let i = 0; i < result.recordset.length; i++) {
             let dataget = result.recordset[i].OtherInformation
-            nameUser= await  db.accounts.getInfo(dataget);
-            data.push(        
+            nameUser = await db.accounts.getInfo(dataget);
+            data.push(
                 new Object({
                     key: i,
                     name: nameUser.recordset[0].AccountName,
@@ -177,6 +177,21 @@ router.post('/checklistphone', utils.verifyToken, async function (req, res, next
     } catch (error) {
         // console.log(error);
         return res.status(500).send({ error: true });
+    }
+});
+
+router.post('/removecard', utils.verifyToken, async function (req, res) {
+    try {
+        const db = req.app.get('db');
+        let data = req.body;
+        console.log(req.phone)
+        const result = await db.receivetransfer.removeBankAccount(req.phone, data.bankname);
+        if (result.rowsAffected[0] === 1)
+            res.status(200).send({ status: 'ok',error:false });
+        else return res.status(200).send({ status: 'error',error:false });
+    } catch (error) {
+        console.log(error);
+        return res.status(403).send({ error: true });
     }
 });
 
@@ -230,7 +245,7 @@ router.post('/recharge', utils.verifyToken, async function (req, res, next) {
     }
 });
 
-router.post('/transfertoanotherbank',utils.verifyToken, async function (req, res, next) {
+router.post('/transfertoanotherbank', utils.verifyToken, async function (req, res, next) {
     try {
         //get data from app( money,phone,bankname)
         const db = req.app.get('db');
@@ -339,7 +354,7 @@ router.post('/transfertofriend', utils.verifyToken, async function (req, res, ne
                 dataSend['source'] = data.source;
                 dataSend['phoneReceive'] = data.phoneReceive;
                 dataSend['messenge'] = data.content;
-                return res.status(200).send({ success: true ,data: dataSend})
+                return res.status(200).send({ success: true, data: dataSend })
             }
             return res.status(200).send({ success: false })
         } else {
