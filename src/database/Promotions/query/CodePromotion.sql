@@ -4,4 +4,4 @@ SELECT TOP 1 [ID]
       ,[Code]
       ,[Status]
   FROM [Wallet].[dbo].[CodePromotions]
-  WHERE [Code] = @code
+  WHERE [CodePromotionID] = @code

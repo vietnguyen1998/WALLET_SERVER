@@ -4,5 +4,5 @@ SELECT [ID]
       ,[MonthNum]
       ,[Money]
       ,[Status]
-  FROM [other].[dbo].[WaterProduct]
+  FROM [Wallet].[dbo].[WaterProduct]
   WHERE [MaKH] = @makh
