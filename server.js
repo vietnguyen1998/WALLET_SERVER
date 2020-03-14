@@ -30,12 +30,13 @@ app.post('/upload', async (req, res) => {
         var image = '/' + req.files.avatar.path + '.jpg';
         try {
             await db.usersettings.UpdateImg(image, req.fields.info);
+        res.status(200).send({ auth: true, error: false, image: image });
         } catch (e) {
-            //return res.status(500).send({ auth: false, error: true, errmessage: "some error2!" });
+            //   return res.status(500).send({ auth: false, error: true, errmessage: "some error2!" });
         }
-        return res.status(200).send({ auth: true, error: false });
+        console.log("return image...")
     } catch (error) {
-        //return res.status(500).send({ auth: false, error: true, errmessage: "error" });
+        // return res.status(500).send({ auth: false, error: true, errmessage: "error" });
     }
 });
 
