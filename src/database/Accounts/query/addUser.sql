@@ -26,4 +26,7 @@ VALUES
     , @status
 );
 
+
+INSERT INTO [dbo].[Customers] values (null, null, @id, null, null, null, null, null, 1 )
+
 SELECT SCOPE_IDENTITY() AS id;
