@@ -19,7 +19,7 @@ const register = async ({ sql, getConnection }) => {
         var yyyy = today.getFullYear();
         if (dd < 10) {dd = '0' + dd}
         if (mm < 10) {   mm = '0' + mm  }
-        today = mm + '/' + dd + '/' + yyyy;
+        today = dd + '-' + mm + '-' + yyyy;
         }else today=time;
         
         request.input("phone", sql.VarChar(50), phone);
