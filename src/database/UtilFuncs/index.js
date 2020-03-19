@@ -112,6 +112,26 @@ const register = async ({ sql, getConnection }) => {
         request.input("phone", sql.VarChar(50), phone); 
         return request.query(sqlQueries.getAccountInfo);
     };
+
+    const getLanguage = async (phone) => {
+        // get a connection to SQL Server
+        const cnx = await getConnection();
+        const request = await cnx.request();
+        request.input("phone", sql.VarChar(50), phone);
+        return request.query(sqlQueries.getLanguage);
+    };
+    const updateLanguage = async (phone, language) => {
+        // get a connection to SQL Server
+        console.log("ok111111")
+        const cnx = await getConnection();
+        const request = await cnx.request();
+        console.log("ok1")
+        request.input("phone", sql.VarChar(50), phone);
+        console.log("ok2")
+        request.input("language", sql.VarChar(255), language);
+        console.log("ok")
+        return request.query(sqlQueries.updateLanguage);
+    };
     return {
         addTransaction,
         updateIncreaseBalance,
@@ -121,6 +141,8 @@ const register = async ({ sql, getConnection }) => {
         updateWaterBalance,
         updateSchoolFee,
         getAccountInfo,
+        getLanguage,
+        updateLanguage
     };
 }
 

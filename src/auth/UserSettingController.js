@@ -79,4 +79,26 @@ router.post('/GetUserInfos', async function (req, res) {
     }
 });
 
+// http://localhost:8080/api/user/GetLanguage/
+router.post('/GetLanguage', async function (req, res, next) {
+    console.log("Begin GetLanguage");
+    try {
+        const db = req.app.get('db');
+        const result = await db.utilFuncs.getLanguage(req.body.phone);
+        return res.status(200).send({ auth: true, error: false, data: result.recordsets[0] });
+    } catch (error) {
+        return res.status(500).send({ auth: false, error: true, errmessage: "Connect database failed" });
+    }
+});
+
+// http://localhost:8080/api/user/UpdateLanguage/
+router.post('/UpdateLanguage', async function (req, res, next) {
+    try {
+        const db = req.app.get('db');
+        await db.utilFuncs.updateLanguage(req.body.phone, req.body.language);
+        return res.status(200).send({ auth: true, error: false});
+    } catch (error) {
+        return res.status(500).send({ auth: false, error: true, errmessage: "Connect database failed" });
+    }
+});
 module.exports = router;
