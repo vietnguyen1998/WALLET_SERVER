@@ -85,7 +85,7 @@ router.post('/GetLanguage', async function (req, res, next) {
     try {
         const db = req.app.get('db');
         const result = await db.utilFuncs.getLanguage(req.body.phone);
-        return res.status(200).send({ auth: true, error: false, data: result.recordsets[0] });
+        return res.status(200).send({ auth: true, error: false, data: result.recordset[0].Language });
     } catch (error) {
         return res.status(500).send({ auth: false, error: true, errmessage: "Connect database failed" });
     }
