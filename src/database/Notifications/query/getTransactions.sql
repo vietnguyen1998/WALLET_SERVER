@@ -10,6 +10,8 @@ SELECT [TransactionID]
       ,[InformationServices]
       ,[OtherInformation]
       ,[Status]
+      ,[ID]
+      ,[Param]
 FROM [wallet].[dbo].[Transactions]
 WHERE [AccountID] = (SELECT [AccountID] From [wallet].[dbo].[Accounts] Where [Phone] = @phone) 
 ORDER BY [CreateDate] DESC

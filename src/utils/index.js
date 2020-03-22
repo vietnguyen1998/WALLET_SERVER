@@ -150,7 +150,7 @@ const getTime = (fieldNumber) => {
     if (fieldNumber == 12) result = formatd(time, 'HHmmss');
     if (fieldNumber == 13) result = formatd(time, 'DDMM');
     if (fieldNumber == -1) result = formatd(time, 'YYYY-MM-DD HH:mm')
-    result = result === '' ? formatd(time, 'YYYY-MM-DD HH:mm') : result;
+    result = result === '' ? formatd(time, 'DD/MM/YYYY HH:mm') : result;
     return result;
 };
 

@@ -54,12 +54,13 @@ router.post('/getTransactions', async function (req, res, next) {
                     status: result.recordset[i].Status,
                     branch: result.recordset[i].SourceBalance,
                     value: result.recordset[i].Amount,
-                    infomationServices: result.recordset[i].InfomationServices,
+                    informationServices: result.recordset[i].InformationServices,
                     content: result.recordset[i].Content,
                     transactionFee: result.recordset[i].TransactionFee,
                     servicesID: result.recordset[i].ServicesID,
                     accountID: result.recordset[i].AccountID,
-                    transactionID: result.recordset[i].TransactionID,
+                    transactionID: result.recordset[i].ID,
+                    param: result.recordset[i].Param
                 })
             );
         }
