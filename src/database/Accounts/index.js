@@ -128,8 +128,19 @@ const register = async ({ sql, getConnection }) => {
         return request.query(sqlQueries.removeDevice);
     };
 
+    const getInfoAccountID = async (accountID) => {
+        // get a connection to SQL Server
+        const cnx = await getConnection();
+        // create a new request
+        const request = await cnx.request();
+        // configure sql query parameters
+        request.input("AccountID", sql.VarChar(128), accountID);
+        // return the executed query
+        return request.query(sqlQueries.getInfoBasedAccountID);
+    };
+
     return {
-        auth, getInfo, addUser, updateBalance, addDevices, updatePassword, getListDevices, updateLoginTime, removeDevice
+        auth, getInfo, addUser, updateBalance, addDevices, updatePassword, getListDevices, updateLoginTime, removeDevice,getInfoAccountID
     };
 };
 

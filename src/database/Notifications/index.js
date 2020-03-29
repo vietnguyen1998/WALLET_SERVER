@@ -32,10 +32,18 @@ const register = async ({ sql, getConnection }) => {
         return request.query(sqlQueries.getBankNames);
     };
 
+    const getTransTransferToFriend = async (phone) => {
+        const cnx = await getConnection();
+        const request = await cnx.request();
+        request.input("phone", sql.VarChar(50), phone);
+        return request.query(sqlQueries.getTransTransferToFriend);
+    };
+
     return {
         getNotifications,
         getTransactions,
-        getBankNames
+        getBankNames,
+        getTransTransferToFriend
     };
 };
 

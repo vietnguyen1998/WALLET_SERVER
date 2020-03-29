@@ -2,6 +2,7 @@
 var router = express.Router();
 var bodyParser = require('body-parser');
 var utils = require('../utils');
+var buyCard = require('../utils/buyCard');
 
 router.use(bodyParser.urlencoded({ extended: false }));
 router.use(bodyParser.json());
@@ -50,7 +51,7 @@ router.post('/paymentPhoneCart', async function (req, res, next) {
         for (i = 0; i < 12; i++) {
             cardNum += '' + Math.floor(Math.random() * 10) + '';
         }
-        
+
         let data = {
             seriNum: seri,
             cardNum: cardNum,
@@ -116,6 +117,49 @@ router.post('/paymentPhone', async function (req, res, next) {
         }
         return res.status(200).send({ error: false, data: data });
     } catch (error) {
+        return res.status(500).send({ auth: false, error: true, message: "Server error" });
+    }
+});
+
+
+router.post('/paymentCard', async function (req, res, next) {
+    let network = req.body.network;
+    let phone = req.body.phone;
+    let money = req.body.money;
+    let source = req.body.source;
+    try {
+        // rea
+        console.log("begin paymentCard...")
+        console.log(req.body)
+        // update balance
+        const db = req.app.get('db');
+        const dataCard = await buyCard.payCard(network, 10000, 1);
+
+        console.log(dataCard[0])
+        const addingData =
+        {
+            "Mã thẻ": dataCard[0].PinCode,
+            "Số Seri": dataCard[0].Serial,
+            "Nhà mạng": network,
+        }
+        // add transaction
+        await db.utilFuncs.addTransaction(req.body.phone, 'Phone01', source, 10000, 0, "Thanh toán", "Mua thẻ điện thoại " + network, "paidCardPhone", 2, utils.getTime(-2), JSON.stringify(addingData));
+        console.log("adding transaction...")
+
+        let data = {
+            seriNum: dataCard[0].Serial,
+            cardNum: dataCard[0].PinCode,
+            message: ('Thanh toán thành công thẻ ' + network),
+            money: money,
+            phone: phone,
+            network: network,
+        }
+        console.log("return result...")
+        return res.status(200).send({ error: false, data: data });
+    } catch (error) {
+        console.log(error)
+        const db = req.app.get('db');
+        await db.utilFuncs.addTransaction(req.body.phone, 'Phone01', source, 10000, 0, "Thanh toán", "Mua thẻ điện thoại " + network, "paidCardPhone", 0);
         return res.status(500).send({ auth: false, error: true, message: "Server error" });
     }
 });

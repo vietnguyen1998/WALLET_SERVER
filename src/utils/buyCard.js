@@ -24,7 +24,7 @@ const payCard = async function (nameNetwork, money, number) {
     let token = null;
     await httpPost(options).then(res => token = res);
     token = token.slice(1, token.length - 1) //remove "" in start and end of string
-
+    console.log(token)
     //buy card
     const shortNameNetwork = getShortNameNetwork(nameNetwork);
     const msg = shortNameNetwork + ':' + money + ':' + number;
@@ -36,10 +36,12 @@ const payCard = async function (nameNetwork, money, number) {
             'Token': token
         }
     };
-    console.log(msg)
+    console.log('Token :' +msg)
     let jsonRes = null;
     await httpPost(options2).then(res => jsonRes = res);
-    let finalResult = JSON.parse(jsonRes.Data);
+
+    let parseIntoJson =JSON.parse(jsonRes)
+    let finalResult = JSON.parse(parseIntoJson.Data);
     return finalResult;
 }
 
