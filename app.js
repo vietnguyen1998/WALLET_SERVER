@@ -1,5 +1,7 @@
 var express = require('express');
 var app = express();
+const rateLimit = require("express-rate-limit");
+
 global.__root   = __dirname + '/'; 
 const conFigFile = require(__root + '/config.js');
 const client = require(__root + 'src/database/index.js');
@@ -29,8 +31,12 @@ app.get('/', function (req, res) {
 
 app.use('/img/bankimg', express.static('./public/bank_image'))
 
+const limiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minutes
+  max: 15 // limit each IP to 15 requests per windowMs
+});
 
-app.get('/api', function (req, res) {
+app.get('/api',limiter, function (req, res) {
   res.status(200).send('API works.');
 });
 
