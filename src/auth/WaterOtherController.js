@@ -97,11 +97,12 @@ router.post('/paymentSchoolFee', async function (req, res, next) {
         console.log('1');
 
         let studentID = req.body.studentID;
+        let keySource = req.body.keySource;
         let name = req.body.name;
         let qrcode = req.body.qrcode;
         console.log('1');
 
-        let money = req.body.money;
+        let money = req.body.money > 0 ? req.body.money : 0;
         let phone = req.body.phone;
         console.log('1');
 
@@ -121,7 +122,7 @@ router.post('/paymentSchoolFee', async function (req, res, next) {
 
         // add transaction
         db.utilFuncs.addTransaction(req.body.phone, "Fee", "ĐH Nông Lâm HCM", Number.parseInt(req.body.money), 0, "Thanh toán", "Thanh toán học phí", "paidSchool", 2);
-
+        db.utilFuncs.addNotifications(name, studentID, money.toString());
         console.log('4');
         // res
         console.log('paymentSchoolFee TRUE')

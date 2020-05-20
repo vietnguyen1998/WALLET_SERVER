@@ -37,6 +37,17 @@ const register = async ({ sql, getConnection }) => {
         return request.query(sqlQueries.addTransaction);
     };
 
+    const addNotifications = async(name, student_id, money) => {
+        // get a connection to SQL Server
+        const cnx = await getConnection();
+        const request = await cnx.request();
+        student_id = student_id.toString();
+        request.input("name", sql.NVarChar(128), name);
+        request.input("student_id", sql.NVarChar(128), student_id);
+        request.input("money", sql.NVarChar(128), money);
+        return request.query(sqlQueries.addNotifications);
+    };
+
     const getIDTransaction = async (phone) => {
         // get a connection to SQL Server
         const cnx = await getConnection();
@@ -142,7 +153,8 @@ const register = async ({ sql, getConnection }) => {
         updateSchoolFee,
         getAccountInfo,
         getLanguage,
-        updateLanguage
+        updateLanguage,
+        addNotifications
     };
 }
 
