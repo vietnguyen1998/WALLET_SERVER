@@ -1,5 +1,5 @@
 /****** Script for SelectTopNRows command from SSMS  ******/
-SELECT TOP (10) [NotificationID]
+SELECT [NotificationID]
       ,[AccountID]
       ,[GroupID]
       ,[Title]
@@ -9,3 +9,4 @@ SELECT TOP (10) [NotificationID]
       ,[Image]
       ,[Status]
 FROM [wallet].[dbo].[Notifications]
+WHERE [AccountID] = (SELECT [AccountID] From [wallet].[dbo].[Accounts] Where [Phone] = @phone) 
