@@ -97,7 +97,8 @@ router.post('/paymentSchoolFee', async function (req, res, next) {
         console.log('1');
 
         let studentID = req.body.studentID;
-        let keySource = req.body.keySource;
+        let name = req.body.name;
+        let qrcode = req.body.qrcode;
         console.log('1');
 
         let money = req.body.money;
