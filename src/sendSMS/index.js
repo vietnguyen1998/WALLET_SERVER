@@ -41,9 +41,8 @@ const sendSMS = function(phones, content, type, sender) {
                 console.log("send sms success")
             }
             else {
-                console.log("send sms failed ");
+                console.log("send sms failed " + body);
             }
-            console.log(body)
         });
     });
 
@@ -56,5 +55,5 @@ const sendSMS = function(phones, content, type, sender) {
 }
 
 module.exports = {
-  sendSMS: sendSMS
+ sendSMS
 }

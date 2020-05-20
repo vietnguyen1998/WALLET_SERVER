@@ -116,6 +116,8 @@ const response8583Data = (data) => {
 
 const parse8583IntoData = (data) => {
     const iso = new iso8583().getIsoJSON(data);
+
+    console.log(iso)
     let date = iso[7].slice(0, 6);
     let time = iso[7].slice(6, iso[7].length);
     return {

@@ -132,9 +132,10 @@ router.post('/getlistpeoplesend', utils.verifyToken, async function (req, res, n
         console.log(phone)
         const result = await db.receivetransfer.GetListPeopleSend(phone);
         let data = new Array();
+        console.log(result.recordset[0])
         for (let i = 0; i < result.recordset.length; i++) {
-            let dataget = result.recordset[i].OtherInformation
-            nameUser = await db.accounts.getInfo(dataget);
+            let dataget = result.recordset[i].Param.split("-")[0]
+            let nameUser = await db.accounts.getInfo(dataget);
             data.push(
                 new Object({
                     key: i,

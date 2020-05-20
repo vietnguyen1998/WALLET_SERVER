@@ -108,6 +108,7 @@ const register = async ({ sql, getConnection }) => {
         const request = await cnx.request();
         //get current date
         let currentDate = utils.getTime(-1);
+        console.log(accountID +" " + uniqueID +" "+currentDate)
         // configure sql query parameters
         request.input("AccountID", sql.VarChar(128), accountID);
         request.input("UniqueID", sql.VarChar(128), uniqueID);

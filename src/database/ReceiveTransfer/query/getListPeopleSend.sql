@@ -1,2 +1,2 @@
-select DISTINCT Cast(OtherInformation as NVarchar(Max)) AS OtherInformation from [dbo].[Transactions] where AccountID =
+select DISTINCT Cast(OtherInformation as NVarchar(Max)) AS OtherInformation,Cast(Param as NVarchar(Max)) AS Param from [dbo].[Transactions] where AccountID =
 (SELECT AccountID FROM Accounts WHERE Phone =@phone) AND cast([OtherInformation] as nvarchar(max)) ='transfer-tofriend'

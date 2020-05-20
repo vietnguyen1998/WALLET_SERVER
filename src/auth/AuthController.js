@@ -60,40 +60,60 @@ var config = require('../../config'); // get config file
 //   }
 // });
 router.post('/login', async function (req, res) {
-    try {
-      const db = req.app.get('db');
-      //check is in black list
-      let dataBlackList = await blacklist.isInBlackList(req.body.phone)
-      if (dataBlackList !== null) {
-        return res.status(200).send({ auth: false, error: 'blacklist', data: dataBlackList });
-      }
-      // const result = bcrypt.compareSync('my password', hash)
-      const result = await db.accounts.auth(req.body.phone,req.body.password);
-      if (result.recordset.length > 0) {
-        //check this user alredy has 3 different device
-          const info = await db.accounts.getInfo(req.body.phone);
-          if (info.recordset.length > 0) {
-            var token = jwt.sign({ phone: req.body.phone }, config.secret, {
-              expiresIn: '1h' // expires in 24 hours
-            });
-            //update last login date
-            const uniqueID = req.body.uniqueID;
-            const accountID = info.recordset[0].AccountID
-            await db.accounts.updateLoginTime(accountID, uniqueID)
-            //delete in black list
-            await blacklist.deletePhone(req.body.phone);
-            delete result.recordset[0]['Password']
-            res.status(200).send({ auth: true, token: token, error: false,data :result.recordset[0] });
-        }
-        else res.status(200).send({ auth: false, token: null, error: true, errmessage: "Some error when get information. Please try again later!" });
-      } else {
-        return res.status(200).send({ auth: false, token: null, error: true, errmessage: "User or password wrong" });
-      }
-    } catch (error) {
-      console.log(error);
-      return res.status(500).send({ auth: false, token: null, error: true, errmessage: error });
+  try {
+    const db = req.app.get('db');
+    //check is in black list
+    let dataBlackList = await blacklist.isInBlackList(req.body.phone)
+    if (dataBlackList !== null) {
+      return res.status(200).send({ auth: false, error: 'blacklist', data: dataBlackList });
     }
-  });
+    // const result = bcrypt.compareSync('my password', hash)
+    const result = await db.accounts.auth(req.body.phone, req.body.password);
+    if (result.recordset.length > 0) {
+      //check this user alredy has  different device (20/5)
+
+      const info = await db.accounts.getInfo(req.body.phone);
+      if (info.recordset.length > 0) {
+
+        //check this user alredy has  different device (20/5)
+        const accountID = result.recordset[0].AccountID
+        const uniqueID = req.body.uniqueID;
+        const listDevices = await db.accounts.getListDevices(accountID);
+        //if not
+        let data = new Array();
+        for (let i = 0; i < listDevices.recordset.length; i++) {
+          if(listDevices.recordset[0].UniqueID!==req.body.uniqueID)
+          data.push(
+            new Object({
+              key: listDevices.recordset[i].UniqueID,
+              name: listDevices.recordset[i].DevicesName,
+              time: listDevices.recordset[i].LastLoginDate
+            })
+          );
+        }
+        if (data.length > 0)
+          return res.status(200).send({ exist: true, error: false, limit: true, data: data });
+
+        //continue login
+        var token = jwt.sign({ phone: req.body.phone }, config.secret, {
+          expiresIn: '1h' // expires in 1 hour
+        });
+        //update last login date
+        await db.accounts.updateLoginTime(accountID, uniqueID)
+        //delete in black list
+        await blacklist.deletePhone(req.body.phone);
+        delete result.recordset[0]['Password']
+        res.status(200).send({ auth: true, token: token, error: false, data: result.recordset[0] });
+      }
+      else res.status(200).send({ auth: false, token: null, error: true, errmessage: "Some error when get information. Please try again later!" });
+    } else {
+      return res.status(200).send({ auth: false, token: null, error: true, errmessage: "User or password wrong" });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({ auth: false, token: null, error: true, errmessage: error });
+  }
+});
 
 router.post('/addblacklist', async function (req, res) {
   try {
@@ -115,7 +135,7 @@ router.post('/sendnewpassword', async function (req, res) {
       if (result.rowsAffected[0] > 0) {
         return res.status(200).send({ success: true });
       }
-    } else return res.status(200).send({ success: false});
+    } else return res.status(200).send({ success: false });
   } catch (error) {
     return res.status(500).send({ success: false });
   }
@@ -135,14 +155,14 @@ router.post('/checkuser', async function (req, res, next) {
       const accountID = result.recordset[0].AccountID
       const listDevices = await db.accounts.getListDevices(accountID);
       //check number of devices in  db
-      if (listDevices.recordset.length <= 3) {
+      if (listDevices.recordset.length <= 1) {
         for (var i = 0; i < listDevices.recordset.length; i++) {
           var obj = listDevices.recordset[i];
           if (uniqueID === obj.UniqueID) {
             return res.status(200).send({ exist: true, error: false, limit: false });
           }
         }
-        if (listDevices.recordset.length < 3) {
+        if (listDevices.recordset.length < 1) {
           const resultAdd = await db.accounts.addDevices(accountID, uniqueID, nameDevice);
           //add device successful
           if (resultAdd.rowsAffected[0] == 1)
@@ -155,7 +175,7 @@ router.post('/checkuser', async function (req, res, next) {
         data.push(
           new Object({
             key: listDevices.recordset[i].UniqueID,
-            name: listDevices.recordset[i].DeviceName,
+            name: listDevices.recordset[i].DevicesName,
             time: listDevices.recordset[i].LastLoginDate
           })
         );
@@ -171,6 +191,7 @@ router.post('/checkuser', async function (req, res, next) {
     return res.status(500).send({ exist: false, error: false, error: true, errmessage: error });
   }
 });
+
 
 //delete devices
 router.post('/removedevice', async function (req, res) {
