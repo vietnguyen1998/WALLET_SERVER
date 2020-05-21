@@ -136,13 +136,23 @@ router.post('/getlistpeoplesend', utils.verifyToken, async function (req, res, n
         for (let i = 0; i < result.recordset.length; i++) {
             let dataget = result.recordset[i].Param.split("-")[0]
             let nameUser = await db.accounts.getInfo(dataget);
-            data.push(
-                new Object({
-                    key: i,
-                    name: nameUser.recordset[0].AccountName,
-                    SDT: dataget
-                })
-            );
+
+            let v = 0;
+            for (v = 0; v < data.length; v++) {
+                let dd = data[v];
+                if (dd.SDT === dataget) {
+                    break;
+                }
+            }
+            if (v === data.length) {
+                data.push(
+                    new Object({
+                        key: i,
+                        name: nameUser.recordset[0].AccountName,
+                        SDT: dataget
+                    })
+                );
+            }
         }
         console.log(data)
         res.status(200).send({ error: false, data: data });
@@ -264,7 +274,7 @@ router.post('/transfertoanotherbank', utils.verifyToken, async function (req, re
         //change format date
         let date = finalData.date; let time = finalData.time;
         let currentDate = date.substring(0, 2) + '-' + date.substring(2, 4)
-        + '-' + '20' + date.slice(-2) + ' ' + time.substring(0, 2) + ':' + time.slice(-2) + ':00';
+            + '-' + '20' + date.slice(-2) + ' ' + time.substring(0, 2) + ':' + time.slice(-2) + ':00';
         if (!finalData.success) {
             let dataSend = {};
             dataSend['time'] = currentDate;
@@ -333,23 +343,23 @@ router.post('/transfertofriend', utils.verifyToken, async function (req, res, ne
             const bankAccountID = bankAccountIDsql.recordset[0].BankAccountID;
 
             //get name of recived user
-            const receiveUser=  await db.auth.getInfo(req.body.phone)
+            const receiveUser = await db.accounts.getInfo(req.body.phone)
             //this is part of iso 8583
             const finalData2 = utils.checkSendMoneyToAnother(data.phoneReceive);
 
             //change format date
             let date = finalData2.date; let time = finalData2.time;
             let currentDate = date.substring(0, 2) + '-' + date.substring(2, 4)
-            + '-' + '20' + date.slice(-2) + ' ' + time.substring(0, 2) + ':' + time.slice(-2) + ':00';
+                + '-' + '20' + date.slice(-2) + ' ' + time.substring(0, 2) + ':' + time.slice(-2) + ':00';
             if (!finalData2.success) {
                 let dataSend = {};
                 dataSend['time'] = currentDate;
                 dataSend['money'] = data.money;
                 dataSend['source'] = data.source;
-                await db.utilFuncs.addTransaction(data.phone, null, data.source, data.money, 0, data.content,'Chuyển tiền' , 'transfer-tofriend', 1, currentDate, data.phoneReceive +'-' +data.name)
+                await db.utilFuncs.addTransaction(data.phone, null, data.source, data.money, 0, data.content, 'Chuyển tiền', 'transfer-tofriend', 1, currentDate, data.phoneReceive + '-' + data.name)
                 return res.status(200).send({ success: false, data: dataSend });
             }
-            const addTrans1 = await db.utilFuncs.addTransaction(data.phone, null, data.source, data.money, 0, data.content,'Chuyển tiền' , 'transfer-tofriend', 2, currentDate, data.phoneReceive+'-' +data.name)
+            const addTrans1 = await db.utilFuncs.addTransaction(data.phone, null, data.source, data.money, 0, data.content, 'Chuyển tiền', 'transfer-tofriend', 2, currentDate, data.phoneReceive + '-' + data.name)
             const addMoney1 = await db.utilFuncs.updateIncreaseBalance(data.phoneReceive, data.money)
             if (addTrans1.rowsAffected[0] === 1 && addMoney1.rowsAffected[0] === 1) {
                 let dataSend = {};
@@ -365,7 +375,7 @@ router.post('/transfertofriend', utils.verifyToken, async function (req, res, ne
             let currentDate = utils.getTime(0);
 
             const minusMoney = await db.utilFuncs.updateDecreaseBalance(data.phone, data.money)
-            const addTrans2 = await db.utilFuncs.addTransaction(data.phone, null, 'ThisWallet', data.money, 0, data.content,'Chuyển tiền', 'transfer-tofriend', 2, currentDate, data.phoneReceive+'-' +data.name)
+            const addTrans2 = await db.utilFuncs.addTransaction(data.phone, null, 'ThisWallet', data.money, 0, data.content, 'Chuyển tiền', 'transfer-tofriend', 2, currentDate, data.phoneReceive + '-' + data.name)
             const addMoney2 = await db.utilFuncs.updateIncreaseBalance(data.phoneReceive, data.money)
             if (addTrans2.rowsAffected[0] === 1 && minusMoney.rowsAffected[0] === 1 && addMoney2.rowsAffected[0] === 1) {
                 let dataSend = {};
