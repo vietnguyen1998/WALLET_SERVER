@@ -9,9 +9,9 @@ INSERT INTO [dbo].[Accounts]
       ,[GroupID]
       ,[AccountName]
       ,[Phone]
-      ,[CMND]
       ,[Password]
       ,[Balances]
+            ,[CMND]
       ,[Status]
 )
 VALUES
@@ -20,13 +20,11 @@ VALUES
     , @group
     , @accname
     , @phone
-    ,@cmnd
-    , @password
+     , @password
     , @balances
+      ,@cmnd
     , @status
 );
 
 
-INSERT INTO [dbo].[Customers] values (null, null, @id, null, null, null, null, null, 1 )
-
-SELECT SCOPE_IDENTITY() AS id;
+INSERT INTO [dbo].[Customers] values (null, null, @id, null, null, null, null, null,'vi', 1 )

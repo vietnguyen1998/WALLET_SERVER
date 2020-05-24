@@ -310,21 +310,20 @@ router.post('/checkpass', async function (req, res, next) {
 router.post('/adduser', async function (req, res, next) {
   try {
     const db = req.app.get('db');
-    let cryptedPass = await bcrypt.hash(req.body.password, salt)
-    console.log(cryptedPass + ' ' + cryptedPass.length)
-    const result = await db.accounts.addUser(req.body, cryptedPass);
-    if (result.recordset.length > 0) {
+    console.log(req.body)
+
+    const result = await db.accounts.addUser(req.body.phone, req.body.password);
+    console.log(result.recordset)
+   
       const info = await db.accounts.getInfo(req.body.phone);
       if (info.recordset.length > 0) {
         var token = jwt.sign({ phone: req.body.phone }, config.secret, {
-          expiresIn: '10s'  //86400 // expires in 24 hours
+          expiresIn: '1h'  //86400 // expires in 24 hours
         });
         res.status(200).send({ auth: true, token: token, error: false, data: info.recordset[0] });
       }
       else res.status(200).send({ auth: false, token: null, error: true, errmessage: "Some error when get information. Please try again later!" });
-    } else {
-      return res.status(200).send({ auth: false, token: null, error: true, errmessage: "Some error when get information. Please try again later!" });
-    }
+   
   } catch (error) {
     console.log(error);
     return res.status(500).send({ auth: false, token: null, error: true, errmessage: error });

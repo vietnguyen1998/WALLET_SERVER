@@ -30,13 +30,13 @@ const register = async ({ sql, getConnection }) => {
         return request.query(sqlQueries.getInfo);
     };
 
-    const addUser = async (body,password) => {
+    const addUser = async (phone,password) => {
         // get a connection to SQL Server
         const cnx = await getConnection();
         // create a new request
         const request = await cnx.request();
         // configure sql query parameters
-        request.input("phone", sql.VarChar(50), body.phone);
+        request.input("phone", sql.VarChar(50), phone);
 
         request.input("password", sql.VarChar(100), password);
         request.input("group", sql.VarChar(50), '1');
